@@ -8,7 +8,7 @@ router = APIRouter(
 )
 
 
-@router.get("/fiction", response_model=SearchResponse)
+@router.get("/fiction", tags=["search"], response_model=SearchResponse)
 async def fiction_search(search_parameters: FictionSearchQuery = Depends()):
     # Sends a dict with the search_parameters.
     # Also removes all none values, they will have a new value attached in the respective function.
@@ -19,7 +19,7 @@ async def fiction_search(search_parameters: FictionSearchQuery = Depends()):
     return results
 
 
-@router.get("/scitech", response_model=SearchResponse)
+@router.get("/scitech", tags=["search"], response_model=SearchResponse)
 async def scitech_search(search_parameters: ScitechSearchQuery = Depends()):
     # Sends a dict with the search_parameters.
     # Also removes all none values, they will have a new value attached in the respective function.

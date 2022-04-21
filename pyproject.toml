@@ -11,6 +11,7 @@ uvicorn = "^0.17.6"
 grab-fork-from-libgen = "^1.3.3"
 aioredis = "^2.0.1"
 gunicorn = "^20.1.0"
+slowapi = "^0.1.5"
 
 [tool.poetry.dev-dependencies]
 

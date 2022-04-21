@@ -3,15 +3,21 @@ from grab_fork_from_libgen import AIOLibgenSearch
 from grab_fork_from_libgen.exceptions import InvalidSearchParameter, LibgenError
 from models.query_models import FictionSearchQuery, ScitechSearchQuery
 
+from keys import redis_keys
+import aioredis
 
 # All functions receive an SearchParameters instance.
-
+# Requests are cached for 24 hours by default.
 
 async def fiction_handler(search_parameters: FictionSearchQuery):
     search_parameters = search_parameters.dict(exclude_none=True)
     if search_parameters.get("language"):
         # .get is used because it doesn't raise an error.
         search_parameters["language"] = search_parameters["language"].capitalize()
+    # Try using the cached version, if it exists:
+    try:
+        aioredis.from_url()
+
 
     try:
         lbs = AIOLibgenSearch("fiction", **search_parameters)

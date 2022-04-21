@@ -9,3 +9,7 @@ class SearchResponse(BaseModel):
 
 class FilterResponse(BaseModel):
     filtered_data: dict
+
+class MetadataResponse(BaseModel):
+    download_links: dict
+    description: str
