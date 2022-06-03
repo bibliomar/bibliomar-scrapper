@@ -8,6 +8,8 @@ https://github.com/Lamarcke/grab-fork-from-libgen
 **See the docs:**  
 https://biblioterra.herokuapp.com/v1/docs
 
+Biblioterra was made as an api for a future React rewrite of my "Bibliomar" project.
+
 # Disclaimer
 Biblioterra is **NOT** populating any databases with LibraryGenesis data.  
 Instead, we save cover *links*, search results *text*, download *links* and description *text*.  
