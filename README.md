@@ -53,3 +53,5 @@ Where `md5` is the given file's md5.
 The value is a json string of the metadata results.  
 There's no need to specify a topic, and we save a few bytes of memory by reducing the string size.  
 
+#### Why not use Cache-Control?
+Because letting the user decide if they want to use the cache or not is not a planned feature.  
