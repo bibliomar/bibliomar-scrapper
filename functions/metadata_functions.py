@@ -6,7 +6,6 @@ from grab_fork_from_libgen.exceptions import MetadataError
 from keys import redis_provider
 from fastapi import HTTPException
 import aioredis
-import os
 
 
 async def get_cover(md5: str):

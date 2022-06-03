@@ -1,11 +1,11 @@
 from fastapi import FastAPI, Request
-from routers.v1 import search_routers, filter_routes, metadata_routes
-from keys import redis_keys
+from routers.v1 import search_routers, filter_routes, metadata_routes, user_routes, library_routes
+from keys import redis_provider
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
-limiter = Limiter(key_func=get_remote_address, storage_uri=redis_keys["uri"])
+limiter = Limiter(key_func=get_remote_address, storage_uri=redis_provider)
 
 tags_metadata = [
     {
@@ -23,7 +23,14 @@ tags_metadata = [
     },
     {
         "name": "user",
-        "description": "Defines methods for populating the user library. Not yet implemented."
+        "description": "Defines routes for authenticating the user. The tokens are then used by library endpoints."
+    },
+    {
+        "name": "library",
+        "description": "Endpoints for populating a user's library. Needs auth token from /users. "
+                       "All books are unique, e.g. you can't have a book both in reading and in backlog"
+                       "at the same time. Biblioterra will try to automatically move your entries when you add "
+                       "something."
     }
 ]
 
@@ -42,6 +49,8 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.include_router(search_routers.router)
 app.include_router(filter_routes.router)
 app.include_router(metadata_routes.router)
+app.include_router(user_routes.router)
+app.include_router(library_routes.router)
 
 
 @app.get("/")

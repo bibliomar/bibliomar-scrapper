@@ -1,10 +1,9 @@
 from pydantic import BaseModel
-from typing import OrderedDict
 
 
 class SearchResponse(BaseModel):
     pagination: dict
-    data: OrderedDict
+    data: list[dict]
 
 
 class FilterResponse(BaseModel):

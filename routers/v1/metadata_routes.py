@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Response, Request
 from models.response_models import MetadataResponse
-from methods.metadata_functions import get_cover, get_metadata
+from functions.metadata_functions import get_cover, get_metadata
 from enum import Enum
 
 router = APIRouter(
@@ -38,7 +38,8 @@ async def get_metadata_by_md5_and_topic(topic: ValidTopics, md5: str, request: R
     """
     metadata_handler = await get_metadata(topic, md5)
     response.headers["Cached"] = metadata_handler[1]
-    metadata_results: tuple = metadata_handler[0] # get_metadata returns a tuple with the download links and description.
+    metadata_results: tuple = metadata_handler[0]  # get_metadata returns a tuple with the download links and
+    # description.
     results = {
         "download_links": metadata_results[0],
         "description": metadata_results[1],

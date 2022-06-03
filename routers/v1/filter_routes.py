@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from methods.filter_functions import book_filtering
+from functions.filter_functions import book_filtering
 from models.response_models import FilterResponse
 
 router = APIRouter(

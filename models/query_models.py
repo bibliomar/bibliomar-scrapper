@@ -3,7 +3,6 @@ from pydantic import BaseModel
 from enum import Enum
 
 
-
 class ValidCriteria(str, Enum):
     default = ""
     title = "title"
@@ -46,6 +45,7 @@ class ValidColumn(str, Enum):
 
 
 class ValidRes(str, Enum):
+    # Pydantic converts these to str automatically.
     results25 = 25
     results50 = 50
     results100 = 100
@@ -53,7 +53,7 @@ class ValidRes(str, Enum):
 
 class FictionSearchQuery(BaseModel):
     # None values are excluded in search_functions.
-    q: str
+    q: str = Query(..., min_length=3)
     criteria: ValidCriteria | None
     language: str | None
     format: str | None
@@ -63,13 +63,10 @@ class FictionSearchQuery(BaseModel):
 
 class ScitechSearchQuery(BaseModel):
     # None values are excluded in search_functions.
-    q: str
+    q: str = Query(..., min_length=3)
     sort: ValidSort | None
     sortmode: ValidSortMode | None
     column: ValidColumn | None
     phrase: ValidWildcardOrPhrase | None
     res: ValidRes | None
     page: int = 1
-
-
-
