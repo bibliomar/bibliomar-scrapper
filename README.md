@@ -11,6 +11,7 @@ https://biblioterra.herokuapp.com/v1/docs
 # Disclaimer
 Biblioterra is **NOT** populating any databases with LibraryGenesis data.  
 Instead, we save cover *links*, search results *text*, download *links* and description *text*.  
+This data is specific to each user's library.
 
 No files, images etc. are being saved.
 
