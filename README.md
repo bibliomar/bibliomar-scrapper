@@ -11,9 +11,12 @@ https://biblioterra.herokuapp.com/v1/docs
 Biblioterra was made as an api for a future React rewrite of my "Bibliomar" project.
 
 # Disclaimer
-Biblioterra is **NOT** populating any databases with LibraryGenesis data.  
+Biblioterra is **NOT** populating any databases with sensitive LibraryGenesis data.
 Instead, we save cover *links*, search results *text*, download *links* and description *text*.  
-This data is specific to each user's library.
+These texts are saved temporarily on Redis cache.  
+
+For user libraries, we save a given file's:  
+Title, authors, md5 and topic.
 
 No files, images etc. are being saved.
 
