@@ -12,13 +12,18 @@ PRs are very welcome.
 **See the docs:**  
 https://biblioterra.herokuapp.com/v1/docs
 
+Biblioterra was made as an api for a future React rewrite of my "Bibliomar" project.
+
 # Disclaimer
+
 Biblioterra is **NOT** populating any databases with sensitive LibraryGenesis data.  
 Instead, we save cover *links*, search results *text*, download *links* and description *text*.  
 All links redirect to their LibraryGenesis counterpart. (e.g. Download links redirect to librarylol)
 
+For user libraries, we save a given file's:  
+Title, authors, md5 and topic.
+
 No files, images etc. are being saved.
-This data is saved so the user can have some kind of "library" and is used for caching purposes.
 
 Biblioterra is a project from a System Analysis and Development's student.
 It's built with my fellow alumni and college mates in mind.
@@ -82,3 +87,5 @@ Where `md5` is the given file's md5.
 The value is a json string of the metadata results.  
 There's no need to specify a topic, and we save a few bytes of memory by reducing the string size.  
 
+#### Why not use Cache-Control?
+Because letting the user decide if they want to use the cache or not is not a planned feature.  
