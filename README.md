@@ -1,6 +1,3 @@
-# Biblioterra
-Biblioterra is an API/Wrapper build on top of LibraryGenesis "api". It's built for educational purposes.
-
 LibraryGenesis has no built-in API, so Biblioterra uses my fork of `grab-convert-from-libgen` instead.
 Find out more about the fork:
 https://github.com/Lamarcke/grab-fork-from-libgen
@@ -89,3 +86,4 @@ There's no need to specify a topic, and we save a few bytes of memory by reducin
 
 #### Why not use Cache-Control?
 Because letting the user decide if they want to use the cache or not is not a planned feature.  
+
