@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from routers.v1 import search_routers, filter_routes, metadata_routes, user_routes, library_routes
+from routers.v1 import search_routes, filter_routes, metadata_routes, user_routes, library_routes
 from keys import redis_provider
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -46,7 +46,7 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-app.include_router(search_routers.router)
+app.include_router(search_routes.router)
 app.include_router(filter_routes.router)
 app.include_router(metadata_routes.router)
 app.include_router(user_routes.router)

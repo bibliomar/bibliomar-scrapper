@@ -1,12 +1,12 @@
 from fastapi import HTTPException
 
 
-async def book_filtering(books: dict, filters: dict):
+async def book_filtering(books: list[dict], filters: dict):
     # This is an excerpt from my grab-fork-from-libgen.
     # This is equivalent to the .get_all() method.
 
-    filtered_results = {}
-    for book in books.values():
+    filtered_results = []
+    for book in books:
         meets_criteria = False
         for filter_key, filter_value in filters.items():
             try:
@@ -25,8 +25,9 @@ async def book_filtering(books: dict, filters: dict):
         # If, at the end of the loop, the book matches all the filters, then add it to the filtered_results.
         # Since this is still inside the first for loop, it will check for every book in the results' dict.
         if meets_criteria:
-            filtered_results.update(book)
+            filtered_results.append(book)
 
+    # An empty list evaluates to false in bool()
     if bool(filtered_results) is False:
         HTTPException(400, "No entry matches the given filters.")
     return filtered_results

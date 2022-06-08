@@ -10,3 +10,11 @@ def mongodb_connect():
     database = client["biblioterra"]
     collection = database["users"]
     return collection
+
+
+def mongodb_search_connect():
+    # This makes no actual I/O.
+    client = AsyncIOMotorClient(mongodb_provider)
+    database = client["biblioterra"]
+    collection = database["search"]
+    return collection

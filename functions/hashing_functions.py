@@ -18,7 +18,7 @@ def hash_compare(hashed_pwd, password):
 def jwt_encode(username: str, expire: int):
     expire_at = datetime.utcnow() + timedelta(days=expire)
     payload = {
-        "username": username,
+        "sub": username,
         "exp": expire_at,
     }
     jwt_token = jwt.encode(payload, jwt_secret, jwt_algorithm)

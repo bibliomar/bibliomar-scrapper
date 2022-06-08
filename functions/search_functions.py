@@ -1,12 +1,12 @@
-import json
-
 from fastapi import HTTPException
 from grab_fork_from_libgen import AIOLibgenSearch
 from grab_fork_from_libgen.exceptions import InvalidSearchParameter, LibgenError
 from models.query_models import FictionSearchQuery, ScitechSearchQuery
 from typing import OrderedDict
 from keys import redis_provider
+
 import aioredis
+import json
 
 
 # All functions receive an SearchParameters instance.
@@ -14,8 +14,14 @@ import aioredis
 # lbs stands for Libgen Search
 # lbr stands for Libgen Results
 
+# TODO
+# Save search to database:
+# Save inside a "searchindexes" collection, on which
+# each document has a file's title and topic.
+# this will be used by the frontend.
 
-async def ordered_to_dict(lbr_data: OrderedDict):
+
+def ordered_to_list(lbr_data: OrderedDict):
     # This removes the keys in the OrderedDict, and returns a list of dictionaries.
     results = []
     for book in lbr_data.values():
@@ -66,7 +72,7 @@ async def fiction_handler(search_parameters: FictionSearchQuery):
         raise HTTPException(400, "No results found with the given query.")
 
     lbr_data = lbr["data"]
-    lbr["data"] = await ordered_to_dict(lbr_data)
+    lbr["data"] = ordered_to_list(lbr_data)
 
     if redis:
         lbr_str: str = json.dumps(lbr)
@@ -117,7 +123,7 @@ async def scitech_handler(search_parameters: ScitechSearchQuery):
         raise HTTPException(400, "No results found with the given query.")
 
     lbr_data = lbr["data"]
-    lbr["data"] = await ordered_to_dict(lbr_data)
+    lbr["data"] = ordered_to_list(lbr_data)
 
     if redis:
         lbr_str: str = json.dumps(lbr)

@@ -1,32 +1,39 @@
 from fastapi import Form, Body
-from pydantic import BaseModel, ValidationError, validator
+from pydantic import BaseModel, ValidationError, validator, Field
 from enum import Enum
+import re
 
-# This regex makes sure the password is bigger than 6 and smaller than 16, has one uppercase character and one lowercase,
-# And has at least one special symbol.
-pass_reg = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,16}$"
-# This ensures that md5 is a 32 hexadecimal string.
-md5_reg = "^[\w]{32}$"
+# This ensures that md5 is a valid 32 hexadecimal string.
+md5_reg = "^[0-9a-fA-F]{32}$"
 
 
 class ValidCategories(str, Enum):
     reading = "reading"
-    to_read = "to-read"
+    to_read = "to_read"
     backlog = "backlog"
+
+
+class ValidEntry(BaseModel):
+    # Defines how a valid book entry should look like.
+    class ValidTopics(str, Enum):
+        fiction = "fiction"
+        sci_tech = "sci-tech"
+
+    authors: str = Field(alias="author(s)")
+    series: str
+    title: str
+    topic: ValidTopics
+    md5: str = Field(..., regex=md5_reg)
 
 
 class AddBooks(BaseModel):
     # This validates the method to add a number of books to a user's document.
-    books: list[dict] = Body(...)
+    # The "books" should be composed of a list of valid entries.
+    books: list[ValidEntry] = Body(...)
+    # Categories need to be valid.
     category: ValidCategories
-
-
-class MoveBooks(BaseModel):
-    # This will receive a list of md5s, and the category to move them to.
-    books_md5: list[str] = Body(...)
-    new_category: ValidCategories
 
 
 class RemoveBooks(BaseModel):
     # This model will receive a list of md5s, and remove all the matching entries.
-    books_md5: list[str] = Body(...)
+    md5_list: list[str] = Body(..., regex=md5_reg)

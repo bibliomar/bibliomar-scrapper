@@ -8,7 +8,7 @@ import re
 # This regex makes sure the password is bigger than 6 and smaller than 16,
 # has one uppercase character and one lowercase, and has at least one special symbol.
 pass_reg = re.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,16}$")
-# This regex ensures username has no whitespaces and is bigger than 5 and smaller than 16:
+# This regex ensures username has no whitespaces or special characters:
 user_reg = re.compile("[\s@$!%*#?&]")
 
 
@@ -17,12 +17,12 @@ async def create_user(form_data: OAuth2PasswordRequestForm):
     connection = mongodb_connect()
     # Checks if username and password are valid:
     if re.search(user_reg, form_data.username):
-        # If there's a whitespace on the username string.
+        # If there's a whitespace or special character on the username string.
         raise HTTPException(400, "Username has whitespaces or special characters.")
 
     if not re.search(pass_reg, form_data.password):
         # If the password doesn't match the regex
-        raise HTTPException(400, "Password is invalid or too insecure.")
+        raise HTTPException(400, "Password is invalid.")
 
     # Checks if username already exists:
     user_check = await connection.find_one({"username": form_data.username})
