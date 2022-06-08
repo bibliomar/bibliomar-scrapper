@@ -7,7 +7,7 @@ from slowapi.util import get_remote_address
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.errors import RateLimitExceeded
 
-
+limiter = Limiter(key_func=get_remote_address, default_limits=["1/2seconds"])
 
 tags_metadata = [
     {
@@ -45,8 +45,9 @@ app = FastAPI(
     openapi_tags=tags_metadata
 )
 
-
+app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
 
 app.include_router(search_routes.router)
 app.include_router(filter_routes.router)
