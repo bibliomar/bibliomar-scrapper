@@ -18,9 +18,10 @@ async def get_cover_by_md5(md5: str, response: Response):
     Requests are cached for 2 weeks by default. If it's cached, the "Cached" header will be true.
     """
 
-    results = await get_cover(md5)
-    response.headers["Cached"] = results[1]
-    return results[0]
+    results_handler = await get_cover(md5)
+    results = results_handler[0]
+    response.headers["Cached"] = results_handler[1]
+    return results
 
 
 @router.get("/metadata/{topic}/{md5}", tags=["metadata"], response_model=MetadataResponse)

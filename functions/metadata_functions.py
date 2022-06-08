@@ -20,7 +20,7 @@ async def get_cover(md5: str):
         redis = None
 
     if redis:
-        possible_cover = redis.get(f"cover:{md5}")
+        possible_cover = await redis.get(f"cover:{md5}")
         if possible_cover:
             cached = "true"
             await redis.close()

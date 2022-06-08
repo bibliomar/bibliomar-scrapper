@@ -62,7 +62,8 @@ async def fiction_handler(search_parameters: FictionSearchQuery):
         raise HTTPException(500, "LibraryGenesis is down or unreachable. This may be an internal issue.")
 
     try:
-        lbr: dict = await lbs.get_results(pagination=True)
+        lbr: dict = await lbs.get_results(pagination=False)
+
     except LibgenError as err:
         raise HTTPException(400, str(err))
 
