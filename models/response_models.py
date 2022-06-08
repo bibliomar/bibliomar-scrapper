@@ -17,3 +17,9 @@ class MetadataResponse(BaseModel):
 
 class IndexesResponse(BaseModel):
     indexes: list[str]
+
+
+class LibraryGetResponse(BaseModel):
+    reading: list
+    to_read: list
+    backlog: list

@@ -1,13 +1,24 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer
 from models.body_models import AddBooks, RemoveBooks
+from models.response_models import LibraryGetResponse
 from functions.hashing_functions import jwt_decode
-from functions.library_functions import add_books, remove_books
+from functions.library_functions import add_books, remove_books, get_books
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/user/login")
 
 router = APIRouter(prefix="/v1")
 
+
+@router.get("/library/get", tags=["library"], response_model=LibraryGetResponse)
+async def library_get(token: str = Depends(oauth2_scheme)):
+    """
+    Returns the populated library of a valid user. Needs to be logged in.
+    """
+    payload = jwt_decode(token)
+    sub = payload.get("sub")
+    library = await get_books(sub)
+    return library
 
 @router.post("/library/add", tags=["library"])
 async def library_add(token: str = Depends(oauth2_scheme), add_body: AddBooks = Depends(AddBooks)):
@@ -43,4 +54,5 @@ async def library_remove(token: str = Depends(oauth2_scheme), remove_body: Remov
     sub = payload.get("sub")
     remove_list = remove_body.md5_list
     await remove_books(sub, remove_list)
+
 

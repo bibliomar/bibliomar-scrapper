@@ -4,6 +4,20 @@ from models.body_models import ValidEntry
 from functions.database_functions import mongodb_connect
 
 
+async def get_books(username):
+    connection = mongodb_connect()
+    try:
+        user_info: dict = await connection.find_one({"username": username})
+    except:
+        # Too broad.
+        raise HTTPException(500, "Couldn't retrieve the user's library.")
+    user_library = {
+        "reading": user_info.get("reading"),
+        "to_read": user_info.get("to_read"),
+        "backlog": user_info.get("backlog")
+    }
+    return user_library
+
 async def remove_books(username, remove_list: list):
     connection = mongodb_connect()
     for md5 in remove_list:
