@@ -1,11 +1,13 @@
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from routers.v1 import search_routes, filter_routes, metadata_routes, user_routes, library_routes
 from keys import redis_provider
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
+from slowapi.middleware import SlowAPIMiddleware
 from slowapi.errors import RateLimitExceeded
 
-limiter = Limiter(key_func=get_remote_address, storage_uri=redis_provider)
+limiter = Limiter(key_func=get_remote_address, default_limits=["1/2seconds"])
 
 tags_metadata = [
     {
@@ -45,6 +47,7 @@ app = FastAPI(
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
 
 app.include_router(search_routes.router)
 app.include_router(filter_routes.router)
@@ -54,6 +57,5 @@ app.include_router(library_routes.router)
 
 
 @app.get("/")
-@limiter.limit("1/minute")
 async def root(request: Request):
     return "See /v1/docs for usage."

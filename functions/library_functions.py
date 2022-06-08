@@ -18,6 +18,7 @@ async def get_books(username):
     }
     return user_library
 
+
 async def remove_books(username, remove_list: list):
     connection = mongodb_connect()
     for md5 in remove_list:
