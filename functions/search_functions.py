@@ -62,18 +62,17 @@ async def fiction_handler(search_parameters: FictionSearchQuery):
         raise HTTPException(500, "LibraryGenesis is down or unreachable. This may be an internal issue.")
 
     try:
-        lbr: dict = await lbs.get_results(pagination=False)
+        lbr: OrderedDict = await lbs.get_results(pagination=False)
 
     except LibgenError as err:
         raise HTTPException(400, str(err))
 
-    if len(lbr.get("data")) == 0:
+    if len(lbr) == 0:
         # in rare stances, LibgenSearch finds no results, yet returns an empty dict.
         # This is to avoid that.
         raise HTTPException(400, "No results found with the given query.")
 
-    lbr_data = lbr["data"]
-    lbr["data"] = ordered_to_list(lbr_data)
+    libgen_results: list = ordered_to_list(lbr)
 
     if redis:
         lbr_str: str = json.dumps(lbr)
@@ -82,7 +81,7 @@ async def fiction_handler(search_parameters: FictionSearchQuery):
 
     cached = "false"
 
-    return lbr, cached
+    return libgen_results, cached
 
 
 async def scitech_handler(search_parameters: ScitechSearchQuery):
@@ -114,22 +113,20 @@ async def scitech_handler(search_parameters: ScitechSearchQuery):
         raise HTTPException(500, "LibraryGenesis is down or unreachable. This may be an internal issue.")
 
     try:
-        lbr: dict = await lbs.get_results(pagination=True)
+        lbr: OrderedDict = await lbs.get_results(pagination=False)
     except LibgenError as err:
         raise HTTPException(400, str(err))
 
-    if len(lbr.get("data")) == 0:
+    if len(lbr) == 0:
         # in rare stances, LibgenSearch finds no results, yet returns an empty dict.
         # This is to avoid that.
         raise HTTPException(400, "No results found with the given query.")
 
-    lbr_data = lbr["data"]
-    lbr["data"] = ordered_to_list(lbr_data)
+    libgen_results: list = ordered_to_list(lbr)
 
     if redis:
         lbr_str: str = json.dumps(lbr)
         await redis.set(f"search:{search_parameters_str}", lbr_str, 86400)
         await redis.close()
     cached = "false"
-
-    return lbr, cached
+    return libgen_results, cached

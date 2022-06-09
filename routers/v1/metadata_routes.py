@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Response, Request
-from models.response_models import MetadataResponse
+from models.response_models import MetadataResponse, IndexesResponse
 from models.query_models import ValidTopics
 from functions.metadata_functions import get_cover, get_metadata
 from functions.search_index_functions import get_search_index
@@ -52,4 +52,4 @@ async def get_search_indexes(topic: ValidTopics):
     :return: list
     """
     indexes = await get_search_index(topic)
-    return indexes
+    return {"indexes": indexes}

@@ -14,15 +14,15 @@ async def fiction_search(response: Response, bg_tasks: BackgroundTasks,
                          search_parameters: FictionSearchQuery = Depends()):
     # Sends the search_parameters.
     results_handler: tuple = await fiction_handler(search_parameters)
-    results: dict = results_handler[0]
+    results: list = results_handler[0]
     cached = results_handler[1]
 
-    if type(results) != dict or bool(results) is False:
+    if type(results) != list or bool(results) is False:
         # This check is here as a last resource, the handler should take care of error handling.
         raise HTTPException(500, "Something wrong happened. This may be an internal issue.")
     response.headers["Cached"] = cached
-    bg_tasks.add_task(save_search_index, ValidTopics.fiction, results.get("data"))
-    return results
+    bg_tasks.add_task(save_search_index, ValidTopics.fiction, results)
+    return {"results": results}
 
 
 @router.get("/search/sci-tech", tags=["search"], response_model=SearchResponse)
@@ -30,13 +30,13 @@ async def scitech_search(response: Response, bg_tasks: BackgroundTasks,
                          search_parameters: ScitechSearchQuery = Depends()):
     # Sends the search_parameters.
     results_handler: tuple = await scitech_handler(search_parameters)
-    results: dict = results_handler[0]
+    results: list = results_handler[0]
 
     cached = results_handler[1]
 
-    if type(results) != dict or bool(results) is False:
+    if type(results) != list or bool(results) is False:
         # This check is here as a last resource, the handler should take care of error handling.
         raise HTTPException(500, "Something wrong happened. This may be an internal issue.")
     response.headers["Cached"] = cached
-    bg_tasks.add_task(save_search_index, ValidTopics.scitech, results.get("data"))
-    return results
+    bg_tasks.add_task(save_search_index, ValidTopics.scitech, results)
+    return {"results": results}

@@ -2,8 +2,7 @@ from pydantic import BaseModel
 
 
 class SearchResponse(BaseModel):
-    pagination: dict
-    data: list[dict]
+    results: list[dict]
 
 
 class FilterResponse(BaseModel):
@@ -16,7 +15,7 @@ class MetadataResponse(BaseModel):
 
 
 class IndexesResponse(BaseModel):
-    indexes: list[str]
+    indexes: list[dict]
 
 
 class LibraryGetResponse(BaseModel):
