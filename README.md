@@ -40,15 +40,17 @@ And while you're at it, why not add a book to a user's library, so he may downlo
 There's some abstraction going on here, but Biblioterra is an API build to serve my fork of `grab-convert-from-libgen` 
 over the web, which in turn is a wrapper on top of LibraryGenesis "API" (LG has no API, so we are basically web scraping.)
 As the end-user, you don't need to worry about this, and all you need to use Biblioterra is to make requests to the api's
-endpoints.  
-
-Biblioterra is hosted on Heroku's free tier, so you probably won't go very far when using it for production.
-You are free to host yourself, however.   
-Just keep in mind you are using a free service that doesn't demand an api key.
+endpoints.
 
 ## How do i use it?
 The docs are your friend:
-https://biblioterra.herokuapp.com/v1/docs
+https://biblioterra.herokuapp.com/v1/docs  
+
+Biblioterra is hosted on Heroku's free tier and only allows request from `localhost`.  
+If you want to use Biblioterra in your website, please host it yourself.  
+
+Just keep in mind you are using a free service that doesn't demand an api key.  
+
 
 ## Caching Implementation
 
