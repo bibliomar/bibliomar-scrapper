@@ -14,11 +14,12 @@ Biblioterra was made as an api for a future React rewrite of my "Bibliomar" proj
 # Disclaimer
 
 Biblioterra is **NOT** populating any databases with sensitive LibraryGenesis data.  
-Instead, we save cover *links*, search results *text*, download *links* and description *text*.  
+Instead, we save cover *links*, search results *text*, download *links* and description *text*.
+These are only used for caching porpuses.
 All links redirect to their LibraryGenesis counterpart. (e.g. Download links redirect to librarylol)
 
 For user libraries, we save a given file's:  
-Title, authors, md5 and topic.
+Title and topic.
 
 No files, images etc. are being saved.
 
