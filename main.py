@@ -9,6 +9,11 @@ from slowapi.errors import RateLimitExceeded
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["1/2seconds"])
 
+origins = [
+    "http://localhost/"
+    "http://localhost:3000/"
+]
+
 tags_metadata = [
     {
         "name": "search",
@@ -48,6 +53,8 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
+app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True, allow_methods=["*"],
+                   allow_headers=["*"])
 
 app.include_router(search_routes.router)
 app.include_router(filter_routes.router)
