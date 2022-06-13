@@ -27,13 +27,14 @@ It's built with my fellow alumni and college mates in mind.
 
 #### Something to keep in mind:
 LibraryGenesis **will** temporarily block you if you abuse their servers. So please use this with care.
+The default limit for Biblioterra's endpoints is 1 request every 2 seconds.
 
 ## What can it do?
 Right now, Biblioterra can do most of what you would expect from a book suite backend/API.
 You can search books, articles, and everything that's on LibraryGenesis.  
 You can then filter your search using queries, and then filter these results using your own
 filters.
-And while you're at it, why not add a book to a user's library, so he can download it and keep track of it later?
+And while you're at it, why not add a book to a user's library, so he may download it and keep track of it later?
 
 ## How does it work?
 There's some abstraction going on here, but Biblioterra is an API build to serve my fork of `grab-convert-from-libgen` 

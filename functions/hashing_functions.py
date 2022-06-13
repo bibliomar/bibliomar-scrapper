@@ -32,3 +32,12 @@ def jwt_decode(jwt_token: str):
     except JWTError:
         HTTPException(401, "Login token is invalid or has expired. Please log in again.",
                       headers={"WWW-Authenticate": "Bearer"})
+
+
+def jwt_validate(jwt_token: str, expire: int):
+    # Takes a valid token and revalidates it.
+    # This is just a shorthand.
+
+    decoded_jwt = jwt_decode(jwt_token)
+    new_jwt = jwt_encode(decoded_jwt.get("sub"), expire)
+    return new_jwt

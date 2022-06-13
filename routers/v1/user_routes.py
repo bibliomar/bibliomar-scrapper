@@ -1,14 +1,23 @@
 from fastapi import APIRouter, Depends, requests, responses
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from functions.user_functions import create_user, login_user
+from functions.hashing_functions import jwt_validate
 from functions.database_functions import mongodb_connect
 
 router = APIRouter(
     prefix="/v1"
 )
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/user/login")
+
 
 # We use OAuth2 Password flow for better integration with the OpenAPI Schema
+
+@router.post("/user/validate", tags=["user"])
+async def user_validate(token: str = Depends(oauth2_scheme)):
+    new_user_token = jwt_validate(token, 3)
+    return {"access_token": new_user_token, "token_type": "bearer"}
+
 
 @router.post("/user/signup", tags=["user"])
 async def user_signup(form_data: OAuth2PasswordRequestForm = Depends(OAuth2PasswordRequestForm)):
