@@ -10,7 +10,7 @@ from slowapi.errors import RateLimitExceeded
 limiter = Limiter(key_func=get_remote_address, default_limits=["1/2seconds"])
 
 origins = [
-    "http://localhost"
+    "http://localhost",
     "http://localhost:3000"
 ]
 
