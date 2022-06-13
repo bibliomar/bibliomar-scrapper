@@ -13,7 +13,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/user/login")
 
 # We use OAuth2 Password flow for better integration with the OpenAPI Schema
 
-@router.post("/user/validate", tags=["user"])
+@router.get("/user/validate", tags=["user"])
 async def user_validate(token: str = Depends(oauth2_scheme)):
     new_user_token = jwt_validate(token, 3)
     return {"access_token": new_user_token, "token_type": "bearer"}
