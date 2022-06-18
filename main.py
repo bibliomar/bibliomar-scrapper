@@ -66,3 +66,8 @@ app.include_router(library_routes.router)
 @app.get("/")
 async def root(request: Request):
     return "See /v1/docs for usage."
+
+
+@app.head("/")
+async def root_head(request: Request):
+    return 200
