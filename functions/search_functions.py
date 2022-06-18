@@ -49,10 +49,10 @@ async def fiction_handler(search_parameters: FictionSearchQuery):
     if redis:
         possible_search_str: str = await redis.get(f"search:{search_parameters_str}")
         if possible_search_str:
-            possible_search_dict: dict = json.loads(possible_search_str)
+            possible_search_list: list = json.loads(possible_search_str)
             cached = "true"
             await redis.close()
-            return possible_search_dict, cached
+            return possible_search_list, cached
 
     try:
         lbs = AIOLibgenSearch("fiction", **search_parameters)
@@ -75,7 +75,7 @@ async def fiction_handler(search_parameters: FictionSearchQuery):
     libgen_results: list = ordered_to_list(lbr)
 
     if redis:
-        lbr_str: str = json.dumps(lbr)
+        lbr_str: str = json.dumps(libgen_results)
         await redis.set(f"search:{search_parameters_str}", lbr_str, 86400)
         await redis.close()
 
@@ -100,10 +100,10 @@ async def scitech_handler(search_parameters: ScitechSearchQuery):
     if redis:
         possible_search_str: str = await redis.get(f"search:{search_parameters_str}")
         if possible_search_str:
-            possible_search_dict: dict = json.loads(possible_search_str)
+            possible_search_list: list = json.loads(possible_search_str)
             cached = "true"
             await redis.close()
-            return possible_search_dict, cached
+            return possible_search_list, cached
 
     try:
         lbs = AIOLibgenSearch("sci-tech", **search_parameters)
@@ -125,7 +125,7 @@ async def scitech_handler(search_parameters: ScitechSearchQuery):
     libgen_results: list = ordered_to_list(lbr)
 
     if redis:
-        lbr_str: str = json.dumps(lbr)
+        lbr_str: str = json.dumps(libgen_results)
         await redis.set(f"search:{search_parameters_str}", lbr_str, 86400)
         await redis.close()
     cached = "false"
