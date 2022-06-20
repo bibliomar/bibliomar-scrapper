@@ -8,7 +8,7 @@ router = APIRouter(
 
 
 @router.post("/filter", tags=["filter"], response_model=FilterResponse)
-async def filtering(books: list[dict], filters: dict):
+async def filtering(books: list[dict], filters):
     print(books, filters)
     results = await book_filtering(books, filters)
     return results

@@ -6,7 +6,7 @@ class SearchResponse(BaseModel):
 
 
 class FilterResponse(BaseModel):
-    filtered_data: dict
+    filtered_data: list[dict]
 
 
 class MetadataResponse(BaseModel):

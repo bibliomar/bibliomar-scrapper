@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer
-from models.body_models import AddBooks, RemoveBooks
+from models.body_models import RemoveBooks, ValidEntry, ValidCategories
 from models.response_models import LibraryGetResponse
 from functions.hashing_functions import jwt_decode
 from functions.library_functions import add_books, remove_books, get_books
@@ -20,8 +20,9 @@ async def library_get(token: str = Depends(oauth2_scheme)):
     library = await get_books(sub)
     return library
 
-@router.post("/library/add", tags=["library"])
-async def library_add(token: str = Depends(oauth2_scheme), add_body: AddBooks = Depends(AddBooks)):
+
+@router.post("/library/add/{category}", tags=["library"])
+async def library_add(books: list[ValidEntry], category: ValidCategories, token: str = Depends(oauth2_scheme)):
     """
     Use this endpoint to add new books to a user's library. <br>
     You can also use this to move books: <br>
@@ -54,5 +55,3 @@ async def library_remove(token: str = Depends(oauth2_scheme), remove_body: Remov
     sub = payload.get("sub")
     remove_list = remove_body.md5_list
     await remove_books(sub, remove_list)
-
-

@@ -9,9 +9,8 @@ md5_reg = "^[0-9a-fA-F]{32}$"
 
 class ValidCategories(str, Enum):
     reading = "reading"
-    to_read = "to_read"
+    to_read = "to-read"
     backlog = "backlog"
-
 
 class ValidEntry(BaseModel):
     # Defines how a valid book entry should look like.
@@ -26,12 +25,6 @@ class ValidEntry(BaseModel):
     md5: str = Field(..., regex=md5_reg)
 
 
-class AddBooks(BaseModel):
-    # This validates the method to add a number of books to a user's document.
-    # The "books" should be composed of a list of valid entries.
-    books: list[ValidEntry] = Body(...)
-    # Categories need to be valid.
-    category: ValidCategories
 
 
 class RemoveBooks(BaseModel):

@@ -37,7 +37,7 @@ async def create_user(form_data: OAuth2PasswordRequestForm):
         "username": form_data.username,
         "password": hashed_pwd,
         "reading": [],
-        "to_read": [],
+        "to-read": [],
         "backlog": []
     }
 

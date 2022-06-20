@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 
 
-async def book_filtering(books: list[dict], filters: dict):
+async def book_filtering(books: list[dict], filters):
     # This is an excerpt from my grab-fork-from-libgen.
     # This is equivalent to the .get_all() method.
 
