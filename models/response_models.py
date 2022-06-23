@@ -11,7 +11,7 @@ class FilterResponse(BaseModel):
 
 class MetadataResponse(BaseModel):
     download_links: dict
-    description: str
+    description: str | None
 
 
 class IndexesResponse(BaseModel):

@@ -11,7 +11,8 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["2/2 seconds"])
 
 origins = [
     "http://localhost",
-    "http://localhost:3000"
+    "http://localhost:3000",
+
 ]
 
 tags_metadata = [
