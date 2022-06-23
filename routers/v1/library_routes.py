@@ -36,10 +36,8 @@ async def library_add(books: list[ValidEntry], category: ValidCategories, token:
     """
     payload = jwt_decode(token)
     sub = payload.get("sub")
-    body_dict = add_body.dict()
-    book_list = body_dict.get("books")
-    category = add_body.category
-    await add_books(sub, book_list, category)
+
+    await add_books(sub, books, category)
 
 
 @router.post("/library/remove", tags=["library"])
