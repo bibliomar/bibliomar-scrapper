@@ -23,6 +23,8 @@ class ValidEntry(BaseModel):
     title: str
     topic: ValidTopics
     md5: str = Field(..., regex=md5_reg)
+    extension: str
+    size: str
 
 
 
