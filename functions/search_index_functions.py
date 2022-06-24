@@ -1,17 +1,55 @@
 from fastapi import HTTPException
 from functions.database_functions import mongodb_search_connect
 from models.query_models import ValidTopics
+import re
 
 
 async def save_search_index(topic: ValidTopics, lbr_data: list[dict]):
+    # This will save the first 10 search results for indexing.
     connection = mongodb_search_connect()
     indexes_list = []
-    for book in lbr_data:
-        search_index_document = {
-            "title": book.get("title"),
-            "topic": book.get("topic")
-        }
-        indexes_list.append(search_index_document)
+    language_array = ["Portuguese", "English"]
+    if len(lbr_data) <= 10:
+        for book in lbr_data:
+            if book.get("language") in language_array:
+                regex = "isbn.*$|asin.*$"
+                reg_compiled = re.compile(regex, re.IGNORECASE)
+                title: str = book.get("title")
+                f_title: str = title.capitalize()
+                last_char: str = ""
+                for char in f_title:
+                    if not (char.isalnum()):
+                        if (char.isspace()) and (last_char.isspace()):
+                            f_title = f_title.replace(char, "")
+                    last_char = char
+
+                f_title = re.sub(reg_compiled, "", f_title)
+                search_index_document = {
+                    "title": f_title,
+                    "topic": book.get("topic")
+                }
+                indexes_list.append(search_index_document)
+
+    else:
+        for x in range(0, 9):
+            if lbr_data[x].get("language") in language_array:
+                regex = "isbn.*$|asin.*$"
+                reg_compiled = re.compile(regex, re.IGNORECASE)
+                title: str = lbr_data[x].get("title")
+                f_title: str = title.capitalize()
+                last_char: str = ""
+                for char in f_title:
+                    if not (char.isalnum()):
+                        if (char.isspace()) and (last_char.isspace()):
+                            f_title = f_title.replace(char, "")
+                    last_char = char
+
+                f_title = re.sub(reg_compiled, "", f_title)
+                search_index_document = {
+                    "title": f_title,
+                    "topic": lbr_data[x].get("topic")
+                }
+                indexes_list.append(search_index_document)
 
     try:
         await connection.update_one({"data": "search_indexes"}, {"$addToSet": {topic: {"$each": indexes_list}}})

@@ -21,6 +21,7 @@ async def fiction_search(response: Response, bg_tasks: BackgroundTasks,
         # This check is here as a last resource, the handler should take care of error handling.
         raise HTTPException(500, "Something wrong happened. This may be an internal issue.")
     response.headers["Cached"] = cached
+
     bg_tasks.add_task(save_search_index, ValidTopics.fiction, results)
     return {"results": results}
 
@@ -38,5 +39,6 @@ async def scitech_search(response: Response, bg_tasks: BackgroundTasks,
         # This check is here as a last resource, the handler should take care of error handling.
         raise HTTPException(500, "Something wrong happened. This may be an internal issue.")
     response.headers["Cached"] = cached
+
     bg_tasks.add_task(save_search_index, ValidTopics.scitech, results)
     return {"results": results}
