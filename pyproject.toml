@@ -18,6 +18,7 @@ python-multipart = "^0.0.5"
 dnspython = "^2.2.1"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 motor = "^2.5.1"
+fastapi-mail = "^1.0.9"
 
 [tool.poetry.dev-dependencies]
 

@@ -1,4 +1,5 @@
 from fastapi import Form, Body
+from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, ValidationError, validator, Field
 from enum import Enum
 import re
@@ -11,6 +12,7 @@ class ValidCategories(str, Enum):
     reading = "reading"
     to_read = "to-read"
     backlog = "backlog"
+
 
 class ValidEntry(BaseModel):
     # Defines how a valid book entry should look like.
@@ -25,8 +27,6 @@ class ValidEntry(BaseModel):
     md5: str = Field(..., regex=md5_reg)
     extension: str
     size: str
-
-
 
 
 class RemoveBooks(BaseModel):

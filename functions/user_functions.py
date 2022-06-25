@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
 from functions.database_functions import mongodb_connect
-from functions.hashing_functions import hash_create, hash_compare, jwt_encode
+from functions.hashing_functions import hash_create, hash_compare, jwt_encode, jwt_decode
 import re
 
 # This regex makes sure the password is bigger than 6 and smaller than 16,
@@ -12,7 +12,7 @@ pass_reg = re.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@
 user_reg = re.compile("[\s@$!%*#?&]")
 
 
-async def create_user(form_data: OAuth2PasswordRequestForm):
+async def create_user(form_data: OAuth2PasswordRequestForm, email: str):
     # connection is an AsyncIOMotorCollection instance.
     connection = mongodb_connect()
     # Checks if username and password are valid:
@@ -24,9 +24,10 @@ async def create_user(form_data: OAuth2PasswordRequestForm):
         # If the password doesn't match the regex
         raise HTTPException(400, "Password is invalid.")
 
-    # Checks if username already exists:
+    # Checks if username or email_url already exists:
     user_check = await connection.find_one({"username": form_data.username})
-    if user_check:
+    email_check = await connection.find_one({"email_url": email})
+    if user_check or email_check:
         raise HTTPException(400, "Username already exists.")
 
     # If it doesn't:
@@ -36,6 +37,7 @@ async def create_user(form_data: OAuth2PasswordRequestForm):
     user_schema = {
         "username": form_data.username,
         "password": hashed_pwd,
+        "email_url": email,
         "reading": [],
         "to-read": [],
         "backlog": []
@@ -61,3 +63,30 @@ async def login_user(form_data: OAuth2PasswordRequestForm):
 
     # If username or password is incorrect.
     raise HTTPException(400, "Incorrect login credentials.")
+
+
+async def recover_user(email: str):
+    connection = mongodb_connect()
+    user = await connection.find_one({"email": email})
+    if not user:
+        raise HTTPException(400, "Email doesn't correspond to an valid account.")
+
+    return user
+
+
+async def change_password(token: str, new_pass: str):
+    connection = mongodb_connect()
+    if not re.search(pass_reg, new_pass):
+        # If the password doesn't match the regex
+        raise HTTPException(400, "New password is invalid.")
+
+    decoded_token: dict = jwt_decode(token)
+    username = decoded_token.get("sub")
+    print(decoded_token)
+    hashed_pwd = hash_create(new_pass)
+    try:
+        await connection.update_one({"username": username}, {"$set": {"password": hashed_pwd}})
+    except:
+        raise HTTPException(500, "Couldn't change this user's password.")
+    return
+

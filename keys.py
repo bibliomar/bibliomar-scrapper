@@ -10,3 +10,6 @@ mongodb_provider = environ.get("MONGODB_URL")
 
 jwt_secret = environ.get("JWT_SECRET")
 jwt_algorithm = environ.get("JWT_ALGORITHM")
+
+email_url = environ.get("EMAIL")
+email_pass = environ.get("EMAILPASS")
