@@ -84,7 +84,7 @@ async def user_recover(email=Form(...)):
     return 200
 
 
-@router.post("/user/change")
+@router.post("/user/change", tags=["user"])
 async def user_change(token=Depends(oauth2_scheme), new_pass=Form(...)):
     await change_password(token, new_pass)
     return 200
