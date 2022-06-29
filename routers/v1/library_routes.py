@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Body
 from fastapi.security import OAuth2PasswordBearer
-from models.body_models import RemoveBooks, ValidEntry, ValidCategories
+from models.body_models import RemoveBooks, ValidEntry, ValidCategories, md5_reg
 from models.response_models import LibraryGetResponse
 from functions.hashing_functions import jwt_decode
 from functions.library_functions import add_books, remove_books, get_books
@@ -40,7 +40,7 @@ async def library_add(books: list[ValidEntry], category: ValidCategories, token:
 
 
 @router.post("/library/remove", tags=["library"])
-async def library_remove(token: str = Depends(oauth2_scheme), remove_body: RemoveBooks = Depends(RemoveBooks)):
+async def library_remove(token: str = Depends(oauth2_scheme), md5_list: list[str] = Body(..., regex=md5_reg)):
     """
     Use this endpoint to remove books from a user's library. <br>
     Books are removed using its md5 identifier.
@@ -50,5 +50,4 @@ async def library_remove(token: str = Depends(oauth2_scheme), remove_body: Remov
     """
     payload = jwt_decode(token)
     sub = payload.get("sub")
-    remove_list = remove_body.md5_list
-    await remove_books(sub, remove_list)
+    await remove_books(sub, md5_list)
