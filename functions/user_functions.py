@@ -26,9 +26,9 @@ async def create_user(form_data: OAuth2PasswordRequestForm, email: str):
 
     # Checks if username or email_url already exists:
     user_check = await connection.find_one({"username": form_data.username})
-    email_check = await connection.find_one({"email_url": email})
+    email_check = await connection.find_one({"email": email})
     if user_check or email_check:
-        raise HTTPException(400, "Username already exists.")
+        raise HTTPException(400, "Username or email already in use.")
 
     # If it doesn't:
     hashed_pwd = hash_create(form_data.password)
@@ -37,7 +37,7 @@ async def create_user(form_data: OAuth2PasswordRequestForm, email: str):
     user_schema = {
         "username": form_data.username,
         "password": hashed_pwd,
-        "email_url": email,
+        "email": email,
         "reading": [],
         "to-read": [],
         "backlog": []

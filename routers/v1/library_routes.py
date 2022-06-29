@@ -4,8 +4,7 @@ from models.body_models import RemoveBooks, ValidEntry, ValidCategories
 from models.response_models import LibraryGetResponse
 from functions.hashing_functions import jwt_decode
 from functions.library_functions import add_books, remove_books, get_books
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/user/login")
+from routers.v1.user_routes import oauth2_scheme
 
 router = APIRouter(prefix="/v1")
 

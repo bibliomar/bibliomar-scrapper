@@ -67,15 +67,17 @@ async def user_login(form_data: OAuth2PasswordRequestForm = Depends()):
 @router.post("/user/recover", tags=["user"])
 async def user_recover(email=Form(...)):
     user = await recover_user(email)
+    username = user["username"]
 
     recover_token = jwt_encode(user["username"], 3)
     html = f"<h2>Recuperação de senha - Bibliomar</h2><br>" \
            f"Alguem (provavelmente você) solicitou uma troca de senha para a conta no Bibliomar.<br>" \
-           f"Para trocar sua senha, basta <strong>acessar o link a seguir:<br><br>" \
+           f"Seu nome de usuario é: {username}" \
+           f"Para trocar sua senha, basta <strong>acessar o link a seguir</strong>:<br><br>" \
            f"http://localhost:3000/user/recover?token={recover_token} <br><br>" \
            f"Esse link é válido por 72 horas.<br>" \
            f"Caso não tenha sido você que solicitou essa troca, basta ignorar esse email.<br><br>" \
-           f"Não compartilhe esse link com ninguém, ele garante acesso a sua conta."
+           f"<strong>Não compartilhe esse link com ninguém, ele garante acesso a sua conta</strong>."
 
     message = MessageSchema(subject="Recuperação de senha - Bibliomar", recipients=[user["email"]], html=html)
     fm = FastMail(conf)

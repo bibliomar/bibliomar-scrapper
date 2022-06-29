@@ -25,7 +25,7 @@ async def remove_books(username, remove_list: list):
         try:
             # Needs a better implementation.
             await connection.update_one({"username": username}, {"$pull": {"reading": {"md5": md5}}})
-            await connection.update_one({"username": username}, {"$pull": {"to_read": {"md5": md5}}})
+            await connection.update_one({"username": username}, {"$pull": {"to-read": {"md5": md5}}})
             await connection.update_one({"username": username}, {"$pull": {"backlog": {"md5": md5}}})
         except:
             # Too broad.
@@ -47,7 +47,7 @@ async def add_books(username: str, add_list: list[ValidEntry], category: str):
 
     try:
         # Adds each book in add_list to the user's specified category.
-        await connection.update_one({"username": username}, {"$push": {category: {"$each": book_list}}})
+        await connection.update_one({"username": username}, {"$addToSet": {category: {"$each": book_list}}})
     except:
         # Too broad.
         raise HTTPException(500, "An error occurred while adding new entries, aborting operation.")
