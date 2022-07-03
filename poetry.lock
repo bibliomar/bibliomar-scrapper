@@ -295,7 +295,7 @@ python-multipart = ">=0.0.5,<0.0.6"
 
 [[package]]
 name = "grab-fork-from-libgen"
-version = "2.0.0"
+version = "2.1.5"
 description = "A fork of grab-convert-from-libgen"
 category = "main"
 optional = false
@@ -818,7 +818,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "35e748a1877a5787375dbccf63b83b045a2d26280e6a4f9d3a53e0c502540896"
+content-hash = "674539ae5975acee8b253ca9f3af496b80779461f17f79249b2d56fa3eac93fa"
 
 [metadata.files]
 aiofiles = [
@@ -997,8 +997,8 @@ fastapi-mail = [
     {file = "fastapi_mail-1.0.9-py3-none-any.whl", hash = "sha256:b987b646afbaa0d7bd0b88ab27fbd934921ca85ac4fb0f5173087b4f9ed0263f"},
 ]
 grab-fork-from-libgen = [
-    {file = "grab-fork-from-libgen-2.0.0.tar.gz", hash = "sha256:a0a520eaeeb1f257105dbe6720f2d37243d2accc28326fa2f06fff445a5c54e2"},
-    {file = "grab_fork_from_libgen-2.0.0-py3-none-any.whl", hash = "sha256:c6dd30680cda71910f3bcd9700ce9e28915cf3635132dade9bbcfdece5f9e34a"},
+    {file = "grab-fork-from-libgen-2.1.5.tar.gz", hash = "sha256:1cbf1ecc650be05cbb8e80d2f72ea2ea497536ca75c56221d973cfe9a8699b32"},
+    {file = "grab_fork_from_libgen-2.1.5-py3-none-any.whl", hash = "sha256:0ce919432d6a223b3a8fdc9e497801dd20821ac1461df8f4adced54885381e2c"},
 ]
 gunicorn = [
     {file = "gunicorn-20.1.0-py3-none-any.whl", hash = "sha256:9dcc4547dbb1cb284accfb15ab5667a0e5d1881cc443e0677b4882a4067a807e"},
