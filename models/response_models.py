@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+
+from pydantic import BaseModel, Field
 
 
 class SearchResponse(BaseModel):
@@ -19,6 +20,6 @@ class IndexesResponse(BaseModel):
 
 
 class LibraryGetResponse(BaseModel):
-    reading: list | None
-    to_read: list | None
-    backlog: list | None
+    reading: list
+    to_read: list = Field(alias="to-read")
+    backlog: list

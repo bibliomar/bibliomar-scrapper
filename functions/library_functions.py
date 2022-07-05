@@ -13,7 +13,7 @@ async def get_books(username):
         raise HTTPException(500, "Couldn't retrieve the user's library.")
     user_library = {
         "reading": user_info.get("reading"),
-        "to_read": user_info.get("to_read"),
+        "to-read": user_info.get("to-read"),
         "backlog": user_info.get("backlog")
     }
     return user_library
