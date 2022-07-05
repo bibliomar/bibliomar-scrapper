@@ -19,6 +19,6 @@ class IndexesResponse(BaseModel):
 
 
 class LibraryGetResponse(BaseModel):
-    reading: list
-    to_read: list
-    backlog: list
+    reading: list | None
+    to_read: list | None
+    backlog: list | None
