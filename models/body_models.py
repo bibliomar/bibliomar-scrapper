@@ -14,13 +14,18 @@ class ValidCategories(str, Enum):
     backlog = "backlog"
 
 
+class ValidEntryConfig:
+    validate_assignment = True
+    allow_population_by_field_name = True
+
+
 class ValidEntry(BaseModel):
     # Defines how a valid book entry should look like.
     class ValidTopics(str, Enum):
         fiction = "fiction"
         sci_tech = "sci-tech"
 
-    authors: str = Field(alias="author(s)")
+    authors: str = Field(..., alias="author(s)")
     series: str
     title: str
     topic: ValidTopics
@@ -28,6 +33,9 @@ class ValidEntry(BaseModel):
     language: str
     extension: str
     size: str
+
+    class Config:
+        allow_population_by_field_name = True
 
 
 class RemoveBooks(BaseModel):
