@@ -65,6 +65,8 @@ async def fiction_handler(search_parameters: FictionSearchQuery):
         lbr: OrderedDict = await lbs.get_results(pagination=False)
 
     except LibgenError as err:
+        if str(err).find("did not have status code 200") != -1:
+            raise HTTPException(503, "Our servers are probably down.")
         raise HTTPException(400, str(err))
 
     if len(lbr) == 0:
@@ -115,6 +117,8 @@ async def scitech_handler(search_parameters: ScitechSearchQuery):
     try:
         lbr: OrderedDict = await lbs.get_results(pagination=False)
     except LibgenError as err:
+        if str(err).find("did not have status code 200") != -1:
+            raise HTTPException(503, "Our servers are probably down.")
         raise HTTPException(400, str(err))
 
     if len(lbr) == 0:
