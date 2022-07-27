@@ -110,6 +110,10 @@ It has simple language, and it showed me important concepts such as password has
 This was the icing on the top, not really something i was looking for at first, but when i started messing around with it, i found it was really simple
 to build a well documented codebase integrated directly in your code.  
 
+
+- Pydantic
+Automatic pydantic integration means we can setup various schemas and mostly forget about manually validating.
+
 ### Why Redis?
 This is the main piece of the caching part of the application, and it makes it dead simple to store values that your requests even more fast.
 

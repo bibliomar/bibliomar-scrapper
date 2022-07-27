@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, Body
-from fastapi.security import OAuth2PasswordBearer
-from models.body_models import RemoveBooks, ValidEntry, ValidCategories, md5_reg
+from models.body_models import ValidEntry, ValidCategories, md5_reg
 from models.response_models import LibraryGetResponse
 from functions.hashing_functions import jwt_decode
 from functions.library_functions import add_books, remove_books, get_books
@@ -51,3 +50,10 @@ async def library_remove(token: str = Depends(oauth2_scheme), md5_list: list[str
     payload = jwt_decode(token)
     sub = payload.get("sub")
     await remove_books(sub, md5_list)
+    return 200
+
+
+@router.post("/library/progress/{category}", tags=["library"])
+async def library_update(category: ValidCategories, book: ValidEntry, token: str = Depends(oauth2_scheme)):
+    payload = jwt_decode(token)
+    sub = payload.get("sub")
