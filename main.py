@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from routers.v1 import search_routes, filter_routes, metadata_routes, user_routes, library_routes
+from routers.v1 import search_routes, metadata_routes, user_routes, library_routes
 from keys import redis_provider
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -60,7 +60,7 @@ app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True
                    allow_headers=["*"])
 
 app.include_router(search_routes.router)
-app.include_router(filter_routes.router)
+
 app.include_router(metadata_routes.router)
 app.include_router(user_routes.router)
 app.include_router(library_routes.router)
