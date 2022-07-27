@@ -9,7 +9,13 @@ PRs are very welcome.
 **See the docs:**  
 https://biblioterra.herokuapp.com/v1/docs
 
-Biblioterra was made as an api for a future React rewrite of my "Bibliomar" project.
+
+
+### Can i use it anywhere?
+Biblioterra was made as an api for a future React rewrite of my "Bibliomar" project, but there's no need to actually use this along with it.  
+v1 routes are mostly unrelated to this other project, so you can still use it, and it will never go out of date. 
+Still, with v2 and on, we will be shifting development to better answer Bibliomar's demands.  
+This increase in version doesn't mean v1 is going out of date, in fact, we don't plan on updating v1 routes, because they don't need it.
 
 # Disclaimer
 
@@ -28,7 +34,7 @@ It's built with my fellow alumni and college mates in mind.
 
 #### Something to keep in mind:
 LibraryGenesis **will** temporarily block you if you abuse their servers. So please use this with care.
-The default limit for Biblioterra's endpoints is 1 request every 2 seconds.
+The default limit for Biblioterra's endpoints is 1 request every 1,5 seconds.
 
 ## What can it do?
 Right now, Biblioterra can do most of what you would expect from a book suite backend/API.
@@ -47,11 +53,15 @@ endpoints.
 The docs are your friend:
 https://biblioterra.herokuapp.com/v1/docs  
 
-Biblioterra is hosted on Heroku's free tier and only allows request from `localhost`.  
-If you want to use Biblioterra in your website, please host it yourself.  
+Biblioterra is hosted on Heroku's free tier and only allows request from `localhost:3000`.  
+If you want to use Biblioterra in your website/app/service, please host it yourself.  
 
 Just keep in mind you are using a free service that doesn't demand an api key.  
 
+## The whys and the hows
+
+### Why Python?
+Bibliomar's original project had a backend written in python, using FlaskAPI.
 
 ## Caching Implementation
 
