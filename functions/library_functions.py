@@ -19,11 +19,11 @@ async def get_books(username: str):
     return user_library
 
 
-async def remove_books(username, remove_list: list[str]):
+async def remove_books(username: str, remove_list: list[str]):
     connection = mongodb_connect()
     for md5 in remove_list:
         try:
-            # Needs a better implementation.
+
             await connection.update_one(
                 {"username": username},
                 {"$pull": {"reading": {"md5": md5}, "to-read": {"md5": md5}, "backlog": {"md5": md5}}}
@@ -34,6 +34,11 @@ async def remove_books(username, remove_list: list[str]):
 
 
 async def add_books(username: str, add_list: list[ValidEntry], category: str):
+    """
+    Adds a book to a category, if it already exists, remove it before adding it again.
+    Can also be used for updating.
+    """
+
     connection = mongodb_connect()
     # Adds every md5 in add_list to a md5_list
     md5_list = []
@@ -52,11 +57,3 @@ async def add_books(username: str, add_list: list[ValidEntry], category: str):
     except:
         # Too broad.
         raise HTTPException(500, "An error occurred while adding new entries, aborting operation.")
-
-
-async def update_book(username: str, md5: str, epubcifi: str, category: ValidCategories):
-    connection = mongodb_connect()
-    try:
-        await connection.update_one({"username": username}, {})
-    except:
-        raise HTTPException(500, "An error occurred while updating the entry, aborting operation.")

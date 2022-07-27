@@ -24,7 +24,9 @@ async def library_add(books: list[ValidEntry], category: ValidCategories, token:
     """
     Use this endpoint to add new books to a user's library. <br>
     You can also use this to move books: <br>
-    Just add new books and use a different category. <br>
+    Add new books and use a different category. <br>
+    Or update existing ones: <br>
+    Add new books in the same category.
 
     /add automatically deletes entries with the same md5 identifier in the user's library, so there's no need to manually
     use /remove before adding or moving.
@@ -51,9 +53,3 @@ async def library_remove(token: str = Depends(oauth2_scheme), md5_list: list[str
     sub = payload.get("sub")
     await remove_books(sub, md5_list)
     return 200
-
-
-@router.post("/library/progress/{category}", tags=["library"])
-async def library_update(category: ValidCategories, book: ValidEntry, token: str = Depends(oauth2_scheme)):
-    payload = jwt_decode(token)
-    sub = payload.get("sub")
