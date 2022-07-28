@@ -33,7 +33,9 @@ class ValidEntry(BaseModel):
     language: str
     extension: str
     size: str
+    # Only useful for keeping track of a user's progress in a book, with epubcifi.
     progress: str | None
+    category: str | None
 
     class Config:
         allow_population_by_field_name = True
