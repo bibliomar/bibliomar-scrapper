@@ -5,7 +5,7 @@ from os import environ
 # This is useful for defining a single value for development and deployment.
 load_dotenv()
 
-preview_url = environ.get("PREVIEW_URL") if environ.get("PREVIEW_URL") is not None else "http://localhost:3002"
+preview_url = environ.get("PREVIEW_URL")
 redis_provider = environ.get("REDIS_URL")
 mongodb_provider = environ.get("MONGODB_URL")
 
