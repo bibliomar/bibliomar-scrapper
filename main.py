@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from routers.v1 import search_routes, metadata_routes, user_routes, library_routes
-from keys import redis_provider
+from keys import preview_url
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.middleware import SlowAPIMiddleware
@@ -10,11 +10,12 @@ from slowapi.errors import RateLimitExceeded
 limiter = Limiter(key_func=get_remote_address, default_limits=["2/2 seconds"])
 
 origins = [
-    "http://localhost",
     "http://localhost:3000",
+    "http://localhost:3001"
     "https://bibliomar.netlify.app",
     "https://bibliomar.site",
     "http://bibliomar.site",
+    preview_url
 ]
 
 tags_metadata = [
