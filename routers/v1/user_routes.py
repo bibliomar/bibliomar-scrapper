@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, requests, responses, Form
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from functions.user_functions import create_user, login_user, recover_user, change_password
 from functions.hashing_functions import jwt_validate, jwt_encode
-from keys import email_url, email_pass
+from keys import email_url, email_pass, site_url
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from fastapi_mail.schemas import EmailStr
 
@@ -74,7 +74,7 @@ async def user_recover(email=Form(...)):
            f"Alguem (provavelmente você) solicitou uma troca de senha para a conta no Bibliomar.<br>" \
            f"Seu nome de usuario é: {username}" \
            f"Para trocar sua senha, basta <strong>acessar o link a seguir</strong>:<br><br>" \
-           f"http://localhost:3000/user/recover?token={recover_token} <br><br>" \
+           f"{site_url}/user/recover?token={recover_token} <br><br>" \
            f"Esse link é válido por 72 horas.<br>" \
            f"Caso não tenha sido você que solicitou essa troca, basta ignorar esse email.<br><br>" \
            f"<strong>Não compartilhe esse link com ninguém, ele garante acesso a sua conta</strong>."

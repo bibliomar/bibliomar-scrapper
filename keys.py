@@ -6,6 +6,7 @@ from os import environ
 load_dotenv()
 
 preview_url = environ.get("PREVIEW_URL")
+site_url = environ.get("SITE_URL")
 redis_provider = environ.get("REDIS_URL")
 mongodb_provider = environ.get("MONGODB_URL")
 
