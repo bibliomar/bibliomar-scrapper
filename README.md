@@ -49,35 +49,50 @@ The docs are your friend:
 https://biblioterra.herokuapp.com/v1/docs  
 
 Biblioterra is hosted on Heroku's free tier and only allows request from `localhost:3000`.  
-If you want to use Biblioterra in your website/app/service/production, please host it yourself.  
+If you want to use Biblioterra in your website/app/service/production, please host it yourself.
 
 Just keep in mind you are using a free service that doesn't demand an api key.  
 
+### How do i host it?
 
+First, git clone the repo to your machine, then:  
+*Make sure you have Poetry installed.*  
+`cd biblioterra`  
+`poetry install`  
+
+Now, you will need to set up the enviroment variables. They are as follows:  
+`REDIS_URL`: The url to your redis instance.  
+`MONGODB_URL`: The url to your mongoDB instance.  
+`JWT_SECRET`: The string which will be your JWT secret, make sure to use a cryptography library.  
+`JWT_ALGORITHM`: The algorithm you are going to use for JWT token generation.   
+`EMAIL`: The email account from which Biblioterra will send it's password recovery emails.  
+`EMAILPASS`: The email's password.  
+`SITE_URL`: The url at which your version is deployed, this is only used in the password recovery emails.  
 
 ### A bit of thanking
 I learned a great ton of Python from messing around in [Willmeyers](https://github.com/willmeyers) codebase, and it's funny to me how a guy that never once saw me was a bridge in my learning process.  
 
 Thank you, the amazing people at LibraryGenesis, and the amazing people on my country, Brazil, who have had nothing but love to show for this project.  
-I do hope it goes way beyond the scope it has now, because it's a project i've been wanting to see since my first days of reading on a screen.   
+I do hope it goes way beyond the scope it has now, because it's a project i've been wanting to make since my first days of reading on a screen.   
 
 
-Developers aside, there are three people i couldn't thank enough, and are the reason this was made possible.
+Developers aside, there are three people i couldn't thank enough, and are the reason this was made possible.  
+
 **My son**  
 How can something so small have this much impact on someone's life?  
 You still don't know what you want, or when you want it, the only thing you do most of the day is sleep.  
 But seeing you learn one thing a day, everyday, showing us the most beautiful smile on Earth, is what gives me the strength to go on.  
-You will always be my treasure, and i hope that i can show what i was doing while you were sleeping on your first year soon. I love you.
+You will always be my treasure, and i hope that i can show what i was doing while you were sleeping on your first year soon. I love you.  
 
-**My wife**  
+**My dearest friend**    
 The most important person on this project, and yet, she didn't write a single line of code.  
 If it wasn't for you, the first Bibliomar would be just a single search bar, that returns a table with almost no content, on a white screen.  
-I hope you know that you are the most important woman in my life, and the place you have in my heart can't be taken by no one else.
+I hope you know that you are the most important woman in my life, and the place you have in my heart can't be taken by no one else.  
 
 **My dad**  
-I know that it's hard to trust a career like this in a third world country, but you've been doing it.  
-I thank you very much for everything you have done, not only for me, but for your grandson as well.
-
+I know that it's hard to trust a career like this in a third world country, but you've been doing it.    
+I thank you very much for everything you have done, not only for me, but for your grandson as well.  
+  
 ## The whys and the hows
 
 Read on if you are interested in reading about my 
@@ -105,6 +120,7 @@ Bibliomar, the frontend portion of this project, is fast for a reason.
 Well, FastAPI docs are more of a big tutorial than the docs i'm used to, but it works, when you know what you are looking for.  
 It has simple language, and it showed me important concepts such as password hashing and JWT.  
 
+And some nice-to-haves:  
 
 - Autodocs  
 This was the icing on the top, not really something i was looking for at first, but when i started messing around with it, i found it was really simple
