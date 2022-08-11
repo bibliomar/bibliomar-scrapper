@@ -277,7 +277,7 @@ fakeredis = ["fakeredis[fakeredis] (>=1.8.2,<2.0.0)"]
 
 [[package]]
 name = "grab-fork-from-libgen"
-version = "3.0.2"
+version = "3.2.0"
 description = "A fork of grab-convert-from-libgen"
 category = "main"
 optional = false
