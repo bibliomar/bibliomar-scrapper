@@ -73,7 +73,7 @@ async def get_metadata(topic: str, md5: str):
             try:
                 possible_metadata = MetadataResponse(**possible_metadata)
                 return possible_metadata, cached
-            except ValidationError:
+            except (ValidationError, TypeError):
                 pass
 
     try:
