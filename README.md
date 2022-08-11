@@ -25,19 +25,23 @@ https://biblioterra.herokuapp.com/v1/docs
 
 Biblioterra is **NOT** populating any databases with sensitive LibraryGenesis data.  
 Instead, we save cover *links*, search results *text*, download *links* and description *text*.
-These are only used for caching porpuses.
 All links redirect to their LibraryGenesis counterpart. (e.g. Download links redirect to librarylol)
 
 No files, images etc. are being saved.
 
-With this in mind, i hereby ask that this project is not modified to be used as an database populating tool.
+With this in mind, i ask that this project is not modified to be used as an database populating tool.
 
 #### Something to keep in mind:
 LibraryGenesis **will** temporarily block you if you abuse their servers. So please use this with care.
 The default limit for Biblioterra's endpoints is 1 request every 1,5 seconds.
 
-`v2` routes are/will be more specific to Bibliomar's demands.  
-`v1` are still unrelated to it, and this won't change anytime soon.  
+**Important**:  
+Metadata routes now return actual relevant metadata.  
+Download links has been moved to it's own route.  
+Please check the docs for more info.
+
+Bugs in this project are mostly related to [grab-fork-from-libgen](https://github.com/Lamarcke/grab-fork-from-libgen)  
+So if a route is not returning what you expect it should, it's probably a change on Libgen side that wasn't reflected on the scraping library.
 
 ### What can it do?
 Right now, Biblioterra can do most of what you would expect from a book suite backend/API.

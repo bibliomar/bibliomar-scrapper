@@ -6,9 +6,9 @@ authors = ["lamarcke <cassiolamarcksilvafreitas@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-fastapi = "^0.75.1"
+fastapi = "^0.79.0"
 uvicorn = "^0.17.6"
-grab-fork-from-libgen = "^2.2.0"
+grab-fork-from-libgen = "^3.0.2"
 aioredis = "^2.0.1"
 gunicorn = "^20.1.0"
 slowapi = "^0.1.5"
@@ -17,8 +17,9 @@ python-dotenv = "^0.20.0"
 python-multipart = "^0.0.5"
 dnspython = "^2.2.1"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
-motor = "^2.5.1"
+motor = "^3.0.0"
 fastapi-mail = "^1.0.9"
+httpx = "^0.22.0"
 
 [tool.poetry.dev-dependencies]
 

@@ -26,13 +26,13 @@ class ValidEntry(BaseModel):
         sci_tech = "sci-tech"
 
     authors: str = Field(..., alias="author(s)")
-    series: str
+    series: str | None
     title: str
     topic: ValidTopics
     md5: str = Field(..., regex=md5_reg)
-    language: str
-    extension: str
-    size: str
+    extension: str | None
+    size: str | None
+
     # Only useful for keeping track of a user's progress in a book, with epubcifi.
     progress: str | None
     category: str | None

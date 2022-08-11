@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel, Field
 
 
@@ -7,7 +6,17 @@ class SearchResponse(BaseModel):
 
 
 class MetadataResponse(BaseModel):
-    download_links: dict
+    title: str | None
+    authors: str | None
+    edition: str | None
+    language: str | None
+    year: str | None
+    publisher: str | None
+    isbn: str | None
+    md5: str | None
+    topic: str | None
+    extension: str | None
+    size: str | None
     description: str | None
 
 

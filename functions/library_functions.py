@@ -5,6 +5,7 @@ from functions.database_functions import mongodb_connect
 
 
 async def get_books(username: str):
+    # This functions retrieves all books in a user's library.
     connection = mongodb_connect()
     try:
         user_info: dict = await connection.find_one({"username": username})

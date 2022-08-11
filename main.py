@@ -28,11 +28,11 @@ tags_metadata = [
     },
     {
         "name": "filter",
-        "description": "Filters the given books using the given parameters"
+        "description": "Deprecated."
     },
     {
         "name": "metadata",
-        "description": "Returns either a cover link, or metadata (which includes download links and description) for "
+        "description": "Returns either a cover link, metadata or download links for "
                        "the given md5 and topic."
     },
     {

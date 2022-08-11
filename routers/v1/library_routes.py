@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Body
+from fastapi import APIRouter, Depends, Body, Path
 from models.body_models import ValidEntry, ValidCategories, md5_reg
 from models.response_models import LibraryGetResponse
 from functions.hashing_functions import jwt_decode
