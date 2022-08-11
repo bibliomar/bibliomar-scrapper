@@ -59,7 +59,7 @@ async def get_metadata(topic: str, md5: str):
         # If something goes wrong and we can't connect to redis.
         # It's quite broad, since all redis exceptions inherit from this class
         redis = None
-    """
+
     if redis:
         possible_metadata = await redis.get(f"metadata:{md5}")
 
@@ -75,7 +75,6 @@ async def get_metadata(topic: str, md5: str):
                 return possible_metadata, cached
             except (ValidationError, TypeError):
                 pass
-    """
 
     try:
         meta = AIOMetadata(timeout=30)
@@ -125,4 +124,3 @@ async def get_dlinks(md5: str, topic: str):
         await redis.set(f"dlinks-{md5}", json.dumps(dlinks), ex=3 * 86400)
     cached = "false"
     return dlinks, cached
-
