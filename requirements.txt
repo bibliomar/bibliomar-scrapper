@@ -21,7 +21,7 @@ email-validator==1.2.1; python_version >= "3.7" and python_full_version < "3.0.0
 fake-useragent==0.1.11; python_version >= "3.9" and python_version < "4.0" and python_full_version >= "3.6.0"
 fastapi-mail==1.1.4; python_version >= "3.7" and python_version < "4.0"
 fastapi==0.79.0; python_full_version >= "3.6.1"
-grab-fork-from-libgen==3.2.0; python_version >= "3.9" and python_version < "4.0"
+grab-fork-from-libgen==3.2.2; python_version >= "3.9" and python_version < "4.0"
 gunicorn==20.1.0; python_version >= "3.5"
 h11==0.12.0; python_version >= "3.7"
 httpcore==0.14.7; python_version >= "3.6"

@@ -83,7 +83,6 @@ async def get_metadata(topic: str, md5: str):
 
     try:
         metadata = await meta.get_metadata(md5, topic)
-        print(metadata)
 
         if redis:
             metadata_json = json.dumps(metadata)
