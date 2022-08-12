@@ -8,6 +8,7 @@ class SearchResponse(BaseModel):
 class MetadataResponse(BaseModel):
     title: str | None
     authors: str | None
+    series: str | None
     edition: str | None
     language: str | None
     year: str | None

@@ -72,7 +72,7 @@ async def get_metadata(topic: str, md5: str):
             await redis.close()
             try:
                 possible_metadata = MetadataResponse(**possible_metadata)
-                return possible_metadata, cached
+                # return possible_metadata, cached
             except (ValidationError, TypeError):
                 pass
 
