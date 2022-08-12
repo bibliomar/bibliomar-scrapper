@@ -13,15 +13,16 @@ router = APIRouter(
 def format_item(item: dict):
     """
     Formats item on a search results list to improve consistency.
-    :param item:
-    :return:
     """
-    f_item = item
-    f_item.pop("author(s)")
-    f_item.update({"authors": item["author(s)"]})
-    if item.get("series") == "":
-        f_item.pop("series")
-        f_item.update({"series": None})
+    try:
+        f_item = item
+        f_item.update({"authors": item["author(s)"]})
+        if item.get("series") == "":
+            f_item.pop("series")
+            f_item.update({"series": None})
+        f_item.pop("author(s)")
+    except KeyError:
+        return item
     return f_item
 
 
