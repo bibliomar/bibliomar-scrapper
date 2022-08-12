@@ -34,7 +34,7 @@ async def get_metadata_by_md5_and_topic(topic: ValidTopics, md5: str, request: R
 
     metadata_handler = await get_metadata(topic, md5)
     response.headers["Cached"] = metadata_handler[1]
-    metadata_results: dict = metadata_handler[0].dict()
+    metadata_results = metadata_handler[0]
     # get_metadata returns a tuple with the download links and description.
     return metadata_results
 

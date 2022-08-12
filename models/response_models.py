@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 
 
 class SearchResponse(BaseModel):
@@ -19,6 +19,13 @@ class MetadataResponse(BaseModel):
     extension: str | None
     size: str | None
     description: str | None
+
+    @validator("extension", pre=True)
+    def extension_upper(cls, v):
+        if v:
+            return v.lower()
+        else:
+            return v
 
 
 class IndexesResponse(BaseModel):
