@@ -32,6 +32,7 @@ class ValidEntry(BaseModel):
     md5: str = Field(..., regex=md5_reg)
     extension: str | None
     size: str | None
+    language: str | None
 
     # Only useful for keeping track of a user's progress in a book, with epubcifi.
     progress: str | None
