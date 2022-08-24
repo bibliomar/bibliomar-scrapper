@@ -45,3 +45,4 @@ class ValidEntry(BaseModel):
 class RemoveBooks(BaseModel):
     # This model will receive a list of md5s, and remove all the matching entries.
     md5_list: list[str] = Body(..., regex=md5_reg)
+
