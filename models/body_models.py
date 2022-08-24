@@ -1,8 +1,6 @@
 from fastapi import Form, Body
-from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import BaseModel, ValidationError, validator, Field
+from pydantic import BaseModel, Field, NonNegativeInt
 from enum import Enum
-import re
 
 # This ensures that md5 is a valid 32 hexadecimal string.
 md5_reg = "^[0-9a-fA-F]{32}$"
@@ -33,6 +31,8 @@ class ValidEntry(BaseModel):
     extension: str | None
     size: str | None
     language: str | None
+    # The user's set rating
+    rating: int | None = Field(..., ge=0, le=5)
 
     # Only useful for keeping track of a user's progress in a book, with epubcifi.
     progress: str | None
