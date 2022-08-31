@@ -71,7 +71,7 @@ Now, you will need to set up the enviroment variables. They are as follows:
 `JWT_ALGORITHM`: The algorithm you are going to use for JWT token generation.   
 `EMAIL`: The email account from which Biblioterra will send it's password recovery emails.  
 `EMAILPASS`: The email's password.  
-`SITE_URL`: The url at which your version is deployed, this is only used in the password recovery emails.  
+`SITE_URL`: The url at which your frontend is deployed, this is only used in the password recovery emails.  
 
 ### A bit of thanking
 I learned a great ton of Python from messing around in [Willmeyers](https://github.com/willmeyers) codebase, and it's funny to me how a guy that never once saw me was a bridge in my learning process.  
