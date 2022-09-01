@@ -31,9 +31,6 @@ class ValidEntry(BaseModel):
     extension: str | None
     size: str | None
     language: str | None
-    # The user's set rating
-    rating: int | None = Field(..., ge=0, le=5)
-
     # Only useful for keeping track of a user's progress in a book, with epubcifi.
     progress: str | None
     category: str | None

@@ -1,1 +1,2 @@
-web: gunicorn -k uvicorn.workers.UvicornWorker main:app --timeout 200
+# Modify this Procfile to fit your needs
+web: gunicorn -k uvicorn.workers.UvicornWorker main:app
