@@ -7,7 +7,6 @@ class ValidTopics(str, Enum):
     fiction = "fiction"
     scitech = "sci-tech"
 
-
 class ValidCriteria(str, Enum):
     default = ""
     title = "title"

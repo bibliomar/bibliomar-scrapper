@@ -100,7 +100,7 @@ async def get_metadata(topic: str, md5: str):
         raise HTTPException(500, "Error validating metadata.")
 
 
-async def get_dlinks(md5: str, topic: str):
+async def get_dlinks(md5: str, topic: str) -> [dict, str]:
     try:
         # This environment key is for Heroku Redis.
         redis = aioredis.from_url(redis_provider, decode_responses=True)
@@ -114,13 +114,13 @@ async def get_dlinks(md5: str, topic: str):
     if redis:
         possible_dlinks = await redis.get(f"dlinks-{md5}")
         if possible_dlinks:
-            possible_dlinks_dict = json.loads(possible_dlinks)
+            possible_dlinks_dict: dict = json.loads(possible_dlinks)
             cached = "true"
             return possible_dlinks_dict, cached
 
     meta = AIOMetadata(timeout=30)
     dlinks = await meta.get_download_links(md5, topic)
     if redis:
-        await redis.set(f"dlinks-{md5}", json.dumps(dlinks), ex=3 * 86400)
+        await redis.set(f"dlinks-{md5}", json.dumps(dlinks), ex=5 * 86400)
     cached = "false"
     return dlinks, cached

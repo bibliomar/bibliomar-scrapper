@@ -1,13 +1,13 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from routers.v1 import search_routes, metadata_routes, user_routes, library_routes
+from routers.v1 import search_routes, metadata_routes, user_routes, library_routes, download_routes
 from keys import preview_url
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.errors import RateLimitExceeded
 
-limiter = Limiter(key_func=get_remote_address, default_limits=["2/2 seconds"])
+limiter = Limiter(key_func=get_remote_address, default_limits=["3/2 seconds"])
 
 if preview_url is None:
     preview_url = "http://localhost:3002"
@@ -34,6 +34,12 @@ tags_metadata = [
         "name": "metadata",
         "description": "Returns either a cover link, metadata or download links for "
                        "the given md5 and topic."
+    },
+    {
+        "name": "temp_downloads",
+        "description": "Temporarily downloads a book and returns a FileResponse to the user. Using it here in preview "
+                       "will make the docs bug out. Should be used in a frontend that wants to download a file, "
+                       "but doesn't want to save it."
     },
     {
         "name": "user",
@@ -68,6 +74,7 @@ app.include_router(search_routes.router)
 app.include_router(metadata_routes.router)
 app.include_router(user_routes.router)
 app.include_router(library_routes.router)
+app.include_router(download_routes.router)
 
 
 @app.get("/")

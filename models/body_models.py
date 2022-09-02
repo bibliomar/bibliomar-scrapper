@@ -1,5 +1,6 @@
 from fastapi import Form, Body
 from pydantic import BaseModel, Field, NonNegativeInt
+from .query_models import ValidTopics
 from enum import Enum
 
 # This ensures that md5 is a valid 32 hexadecimal string.
@@ -19,9 +20,6 @@ class ValidEntryConfig:
 
 class ValidEntry(BaseModel):
     # Defines how a valid book entry should look like.
-    class ValidTopics(str, Enum):
-        fiction = "fiction"
-        sci_tech = "sci-tech"
 
     authors: str = Field(..., alias="author(s)")
     series: str | None
@@ -42,4 +40,3 @@ class ValidEntry(BaseModel):
 class RemoveBooks(BaseModel):
     # This model will receive a list of md5s, and remove all the matching entries.
     md5_list: list[str] = Body(..., regex=md5_reg)
-

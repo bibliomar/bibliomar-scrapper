@@ -22,11 +22,25 @@ import json
 # this will be used by the frontend.
 
 
-def ordered_to_list(lbr_data: OrderedDict):
-    # This removes the keys in the OrderedDict, and returns a list of dictionaries.
+def format_item(lbr_data: OrderedDict):
+    # This removes the keys in the OrderedDict, and returns a list of dictionaries. Also formats authors value for
+    # better consistency.
     results = []
     for book in lbr_data.values():
-        results.append(book)
+        f_item = book
+        try:
+
+            f_item.update({"authors": book["author(s)"]})
+            if book.get("series") == "":
+                # If series is an empty string, change it to a None value.
+                f_item.pop("series")
+                f_item.update({"series": None})
+            f_item.pop("author(s)")
+        except KeyError:
+            # Returns f_item to it's initial state.
+            f_item = book
+
+        results.append(f_item)
 
     return results
 
@@ -75,7 +89,7 @@ async def fiction_handler(search_parameters: FictionSearchQuery):
         # This is to avoid that.
         raise HTTPException(400, "No results found with the given query.")
 
-    libgen_results: list = ordered_to_list(lbr)
+    libgen_results: list = format_item(lbr)
 
     if redis:
         lbr_str: str = json.dumps(libgen_results)
@@ -127,7 +141,7 @@ async def scitech_handler(search_parameters: ScitechSearchQuery):
         # This is to avoid that.
         raise HTTPException(400, "No results found with the given query.")
 
-    libgen_results: list = ordered_to_list(lbr)
+    libgen_results: list = format_item(lbr)
 
     if redis:
         lbr_str: str = json.dumps(libgen_results)
