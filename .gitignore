@@ -215,3 +215,6 @@ cython_debug/
 test.py
 test2.py
 
+# Temp downloads
+temp_downloads
+
