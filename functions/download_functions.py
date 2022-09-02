@@ -25,9 +25,9 @@ async def _create_temp_file(content: bytes, md5: str):
     return filename
 
 
-async def _download_handler(d_link: str):
+async def _download_handler(d_link: str, timeout: int):
     session = AsyncHTMLSession()
-    req = await session.get(d_link, timeout=16, headers=get_request_headers())
+    req = await session.get(d_link, timeout=60, headers=get_request_headers())
     return req.content
 
 
@@ -38,12 +38,8 @@ async def make_temp_download(md5: str, topic: str):
     downloaded_file = None
     last_err = None
     for index, link in enumerate(d_links.values()):
-        if index == 0:
-            # Skips the first download link.
-            continue
-
         try:
-            tried_download = await _download_handler(link)
+            tried_download = await _download_handler(link, 30 if index == 0 else 60)
             temp_file = await _create_temp_file(tried_download, md5)
             print(f"from {link}")
             if temp_file is not None:
