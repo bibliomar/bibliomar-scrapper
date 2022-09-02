@@ -36,7 +36,7 @@ tags_metadata = [
                        "the given md5 and topic."
     },
     {
-        "name": "temp_downloads",
+        "name": "temp",
         "description": "Temporarily downloads a book and returns a FileResponse to the user. Using it here in preview "
                        "will make the docs bug out. Should be used in a frontend that wants to download a file, "
                        "but doesn't want to save it."

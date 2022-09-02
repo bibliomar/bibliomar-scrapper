@@ -2,14 +2,14 @@ import os
 
 from fastapi import HTTPException
 from grab_fork_from_libgen.search_config import get_request_headers
-from requests import exceptions
+from requests import exceptions, Response
 from requests_html import AsyncHTMLSession
 from functions.metadata_functions import get_dlinks
 
 import aiofiles
 from aiofiles import os as aioos
 
-temp_download_folder = "temp_downloads"
+temp_download_folder = "temp"
 
 
 async def remove_temp_download(filename: str):
@@ -25,7 +25,7 @@ async def _create_temp_file(content: bytes, md5: str):
     return filename
 
 
-async def _download_handler(d_link: str, timeout: int):
+async def _download_handler(d_link: str):
     session = AsyncHTMLSession()
     req = await session.get(d_link, timeout=60, headers=get_request_headers())
     return req.content
@@ -39,7 +39,7 @@ async def make_temp_download(md5: str, topic: str):
     last_err = None
     for index, link in enumerate(d_links.values()):
         try:
-            tried_download = await _download_handler(link, 30 if index == 0 else 60)
+            tried_download = await _download_handler(link)
             temp_file = await _create_temp_file(tried_download, md5)
             print(f"from {link}")
             if temp_file is not None:

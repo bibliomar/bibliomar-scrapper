@@ -8,9 +8,10 @@ from models.query_models import ValidTopics
 router = APIRouter(prefix="/v1")
 
 
-@router.get("/temp-download/{topic}/{md5}", tags=["temp_downloads"])
+@router.get("/temp-download/{topic}/{md5}", tags=["temp"])
 async def temp_download_book(bg: BackgroundTasks, request: Request, topic: ValidTopics,
                              md5: str = Query(..., regex=md5_reg)):
+
     downloaded_file = await make_temp_download(md5, topic)
     bg.add_task(remove_temp_download, downloaded_file)
-    return FileResponse(downloaded_file, media_type="application/epub+zip")
+    return FileResponse(downloaded_file)
