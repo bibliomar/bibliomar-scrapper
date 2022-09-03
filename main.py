@@ -18,6 +18,8 @@ origins = [
     "https://bibliomar.netlify.app",
     "https://bibliomar.site",
     "http://bibliomar.site",
+    "https://www.bibliomar.site",
+    "http://www.bibliomar.site",
     preview_url
 ]
 
