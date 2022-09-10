@@ -35,15 +35,21 @@ async def get_book(username: str, md5: str):
             {"username": username, "backlog.md5": md5}, {"backlog.$"})
         # Check if any of the values return are not None
         if book_on_reading or book_on_toread or book_on_backlog:
+
+            valid_entry = book_on_reading.values() if book_on_reading else \
+                book_on_toread.values() if book_on_toread else book_on_backlog.values() if book_on_backlog else None
+            if valid_entry is None:
+                raise HTTPException(400, "No book found with the given MD5.")
+
             # If they are not, build a list with the values of the valid element.
             # This list includes an "_id" and "{category-name} keys, but we are only retrieving their values."
-            result = list(book_on_reading.values() or book_on_toread.values() or book_on_backlog.values())
+            entry_list = list(valid_entry)
             # The "{category-name}" value is an array of only one element, because we are projecting on our queries.
             # So we use [1] to access it's values, and [0] to retrieve the first and only document.
-            valid_entry: dict = result[1][0]
+            result: dict = entry_list[1][0]
             # We will be performing validation before returning to the user.
             try:
-                valid_result = ValidEntry(**valid_entry)
+                valid_result = ValidEntry(**result)
                 return valid_result
             except (ValidationError, TypeError):
                 raise HTTPException(500, "Error while validating the results.")
