@@ -2,7 +2,7 @@ import json
 
 from grab_fork_from_libgen import AIOMetadata
 from grab_fork_from_libgen.exceptions import MetadataError
-from models.response_models import MetadataResponse
+from models.response_models import MetadataResponse, DownloadLinksResponse
 from pydantic import ValidationError
 from keys import redis_provider
 from fastapi import HTTPException
@@ -114,13 +114,23 @@ async def get_dlinks(md5: str, topic: str) -> [dict, str]:
     if redis:
         possible_dlinks = await redis.get(f"dlinks-{md5}")
         if possible_dlinks:
-            possible_dlinks_dict: dict = json.loads(possible_dlinks)
-            cached = "true"
-            return possible_dlinks_dict, cached
+            try:
+                possible_dlinks_dict: dict = json.loads(possible_dlinks)
+                f_dlinks = DownloadLinksResponse(**possible_dlinks_dict)
+                if bool(f_dlinks.dict()):
+                    cached = True
+                    print("Runs")
+                    return f_dlinks.dict(by_alias=True), cached
+            except (ValidationError, TypeError):
+                pass
 
-    meta = AIOMetadata(timeout=30)
-    dlinks = await meta.get_download_links(md5, topic)
-    if redis:
+    try:
+        meta = AIOMetadata(timeout=30)
+        dlinks: dict = await meta.get_download_links(md5, topic)
+        f_dlinks = DownloadLinksResponse(**dlinks)
+    except (MetadataError, ValidationError):
+        raise HTTPException(500, "Couldn't retrieve download links for this book")
+    if redis and bool(f_dlinks.dict()):
         await redis.set(f"dlinks-{md5}", json.dumps(dlinks), ex=5 * 86400)
     cached = "false"
-    return dlinks, cached
+    return f_dlinks.dict(by_alias=True), cached

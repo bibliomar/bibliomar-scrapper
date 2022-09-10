@@ -1,8 +1,11 @@
 from fastapi import HTTPException
+from pydantic import ValidationError
 
 from models.body_models import ValidEntry, ValidCategories
 from functions.database_functions import mongodb_connect
 
+
+# These functions should only receive valid usernames, authentication is done inside the endpoints.
 
 async def get_books(username: str):
     # This functions retrieves all books in a user's library.
@@ -18,6 +21,35 @@ async def get_books(username: str):
         "backlog": user_info.get("backlog")
     }
     return user_library
+
+
+async def get_book(username: str, md5: str):
+    connection = mongodb_connect()
+    try:
+        # Motor optimizes requests by batch requesting all of this.
+        book_on_reading: dict = await connection.find_one(
+            {"username": username, "reading.md5": md5}, {"reading.$"})
+        book_on_toread: dict = await connection.find_one(
+            {"username": username, "to-read.md5": md5}, {"to-read.$"})
+        book_on_backlog: dict = await connection.find_one(
+            {"username": username, "to-read.md5": md5}, {"backlog.$"})
+        # Check if any of the values return are not None
+        if book_on_reading or book_on_toread or book_on_backlog:
+            # If they are not, build a list with the values of the valid element.
+            # This list includes an "_id" and "{category-name} keys, but we are only retrieving their values."
+            result = list(book_on_reading.values() or book_on_toread.values() or book_on_backlog.values())
+            # The "{category-name}" value is an array of only one element, because we are projecting on our queries.
+            # So we use [1] to access it's values, and [0] to retrieve the first and only document.
+            valid_entry: dict = result[1][0]
+            # We will be performing validation before returning to the user.
+            try:
+                valid_result = ValidEntry(**valid_entry)
+                return valid_result
+            except (ValidationError, TypeError):
+                raise HTTPException(500, "Error while validating the results.")
+
+    except:
+        raise HTTPException(400, "Could not find this specific book. This may be an internal error.")
 
 
 async def remove_books(username: str, remove_list: list[str]):

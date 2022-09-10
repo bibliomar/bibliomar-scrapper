@@ -1,6 +1,8 @@
 from fastapi import File
 from pydantic import BaseModel, Field, validator
 
+from models.body_models import ValidEntry
+
 
 class SearchResponse(BaseModel):
     results: list[dict]
@@ -37,3 +39,16 @@ class LibraryGetResponse(BaseModel):
     reading: list
     to_read: list = Field(alias="to-read")
     backlog: list
+
+
+class BookGetResponse(BaseModel):
+    result: ValidEntry
+
+
+class DownloadLinksResponse(BaseModel):
+    get: str | None = Field(None, alias="GET")
+    Cloudflare: str | None
+    ipfsio: str | None = Field(None, alias="IPFS.io")
+    c4rex: str | None = Field(None, alias="c4rex.co")
+    Crust: str | None
+    Pinata: str | None
