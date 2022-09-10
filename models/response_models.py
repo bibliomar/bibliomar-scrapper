@@ -46,7 +46,7 @@ class BookGetResponse(BaseModel):
 
 
 class DownloadLinksResponse(BaseModel):
-    get: str | None = Field(None, alias="GET")
+    get: str = Field(..., alias="GET")
     Cloudflare: str | None
     ipfsio: str | None = Field(None, alias="IPFS.io")
     c4rex: str | None = Field(None, alias="c4rex.co")
