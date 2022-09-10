@@ -106,10 +106,11 @@ async def get_dlinks(md5: str, topic: str) -> [dict, str]:
         redis = aioredis.from_url(redis_provider, decode_responses=True)
         await redis.ping()
 
-    except aioredis.exceptions.RedisError:
+    except aioredis.exceptions.RedisError as err:
         # If something goes wrong and we can't connect to redis.
         # It's quite broad, since all redis exceptions inherit from this class
         redis = None
+        print(err)
 
     if redis:
         possible_dlinks = await redis.get(f"dlinks-{md5}")
@@ -118,7 +119,7 @@ async def get_dlinks(md5: str, topic: str) -> [dict, str]:
                 possible_dlinks_dict: dict = json.loads(possible_dlinks)
                 f_dlinks = DownloadLinksResponse(**possible_dlinks_dict)
                 if bool(f_dlinks.dict()):
-                    cached = True
+                    cached = "true"
                     print("Runs")
                     return f_dlinks.dict(by_alias=True), cached
             except (ValidationError, TypeError):
