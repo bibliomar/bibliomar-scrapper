@@ -32,7 +32,7 @@ async def get_book(username: str, md5: str):
         book_on_toread: dict = await connection.find_one(
             {"username": username, "to-read.md5": md5}, {"to-read.$"})
         book_on_backlog: dict = await connection.find_one(
-            {"username": username, "to-read.md5": md5}, {"backlog.$"})
+            {"username": username, "backlog.md5": md5}, {"backlog.$"})
         # Check if any of the values return are not None
         if book_on_reading or book_on_toread or book_on_backlog:
             # If they are not, build a list with the values of the valid element.
