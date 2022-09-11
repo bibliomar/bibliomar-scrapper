@@ -16,6 +16,7 @@ origins = [
     "http://localhost:3000",
     "http://localhost:3001"
     "https://bibliomar.netlify.app",
+    "http://bibliomar.netlify.app"
     "https://bibliomar.site",
     "http://bibliomar.site",
     "https://www.bibliomar.site",

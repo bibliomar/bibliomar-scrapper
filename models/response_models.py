@@ -46,6 +46,7 @@ class BookGetResponse(BaseModel):
 
 
 class DownloadLinksResponse(BaseModel):
+    # If get is None it means something has gone wrong with the request.
     get: str = Field(..., alias="GET")
     Cloudflare: str | None
     ipfsio: str | None = Field(None, alias="IPFS.io")
