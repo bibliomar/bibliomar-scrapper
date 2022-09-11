@@ -10,19 +10,23 @@ import re
 pass_reg = re.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,16}$")
 # This regex ensures username has no whitespaces or special characters:
 user_reg = re.compile("[\s@$!%*#?&]")
+email_reg = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
 
 
 async def create_user(form_data: OAuth2PasswordRequestForm, email: str):
     # connection is an AsyncIOMotorCollection instance.
     connection = mongodb_connect()
     # Checks if username and password are valid:
-    if re.search(user_reg, form_data.username):
+    if re.match(user_reg, form_data.username):
         # If there's a whitespace or special character on the username string.
         raise HTTPException(400, "Username has whitespaces or special characters.")
 
-    if not re.search(pass_reg, form_data.password):
+    if not re.match(pass_reg, form_data.password):
         # If the password doesn't match the regex
         raise HTTPException(400, "Password is invalid.")
+
+    if not re.match(email_reg, email):
+        raise HTTPException(400, "Email is invalid.")
 
     # Checks if username or email_url already exists:
     user_check = await connection.find_one({"username": form_data.username})
@@ -74,19 +78,28 @@ async def recover_user(email: str):
     return user
 
 
-async def change_password(token: str, new_pass: str):
+async def change_password(token: str, new_pass: str | None, new_email: str | None):
     connection = mongodb_connect()
-    if not re.search(pass_reg, new_pass):
-        # If the password doesn't match the regex
-        raise HTTPException(400, "New password is invalid.")
-
     decoded_token: dict = jwt_decode(token)
     username = decoded_token.get("sub")
-    print(decoded_token)
-    hashed_pwd = hash_create(new_pass)
-    try:
-        await connection.update_one({"username": username}, {"$set": {"password": hashed_pwd}})
-    except:
-        raise HTTPException(500, "Couldn't change this user's password.")
+    if new_pass:
+        if not re.match(pass_reg, new_pass):
+            # If the password doesn't match the regex
+            raise HTTPException(400, "New password is invalid.")
+
+        hashed_pwd = hash_create(new_pass)
+        try:
+            await connection.update_one({"username": username}, {"$set": {"password": hashed_pwd}})
+        except:
+            raise HTTPException(500, "Couldn't change this user's password.")
+    if new_email:
+        if not re.match(email_reg, new_pass):
+            # If the password doesn't match the regex
+            raise HTTPException(400, "New password is invalid.")
+        try:
+            await connection.update_one({"username": username}, {"$set": {"email": new_email}})
+        except:
+            raise HTTPException(500, "Couldn't change this user's email.")
+
     return
 

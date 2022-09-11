@@ -120,7 +120,6 @@ async def get_dlinks(md5: str, topic: str) -> [dict, str]:
                 f_dlinks = DownloadLinksResponse(**possible_dlinks_dict)
                 if bool(f_dlinks.dict()):
                     cached = "true"
-                    print("Runs")
                     return f_dlinks.dict(by_alias=True), cached
             except (ValidationError, TypeError):
                 pass

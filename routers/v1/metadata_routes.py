@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends, Response, Request
+
+from models.path_models import ValidIndexesTopic
 from models.response_models import IndexesResponse, MetadataResponse
 from models.query_models import ValidTopics
 from functions.metadata_functions import get_cover, get_metadata, get_dlinks
@@ -48,10 +50,9 @@ async def get_download_links(topic: ValidTopics, md5: str, request: Request, res
 
 
 @router.get("/indexes/{topic}", tags=["metadata"])
-async def get_search_indexes(topic: ValidTopics):
+async def get_search_indexes(topic: ValidIndexesTopic):
     """
     Returns all saved search indexes as a list.
-    :return: list
     """
     indexes = await get_search_index(topic)
     return {"indexes": indexes}

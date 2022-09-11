@@ -73,11 +73,11 @@ async def user_recover(email=Form(...)):
     html = f"<h2>Recuperação de senha - Bibliomar</h2><br>" \
            f"Alguem (provavelmente você) solicitou uma troca de senha para a conta no Bibliomar.<br>" \
            f"Seu nome de usuario é: {username}" \
-           f"Para trocar sua senha, basta <strong>acessar o link a seguir</strong>:<br><br>" \
+           f"Para trocar sua senha, basta acessar o link a seguir:<br><br>" \
            f"{site_url}/user/recover?token={recover_token} <br><br>" \
            f"Esse link é válido por 72 horas.<br>" \
-           f"Caso não tenha sido você que solicitou essa troca, basta ignorar esse email.<br><br>" \
-           f"<strong>Não compartilhe esse link com ninguém, ele garante acesso a sua conta</strong>."
+           f"Caso não tenha sido você que solicitou essa troca, basta ignorar esse email. <br><br>" \
+           f"<strong>Não compartilhe esse link com ninguém, ele garante acesso a sua conta e seus dados</strong>."
 
     message = MessageSchema(subject="Recuperação de senha - Bibliomar", recipients=[user["email"]], html=html)
     fm = FastMail(conf)
@@ -87,6 +87,7 @@ async def user_recover(email=Form(...)):
 
 
 @router.post("/user/change", tags=["user"])
-async def user_change(token=Depends(oauth2_scheme), new_pass=Form(...)):
-    await change_password(token, new_pass)
+async def user_change(token=Depends(oauth2_scheme), new_pass: str | None = Form(None),
+                      new_email: str | None = Form(None)):
+    await change_password(token, new_pass, new_email)
     return 200

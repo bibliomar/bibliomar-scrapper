@@ -71,7 +71,7 @@ async def remove_books(username: str, remove_list: list[str]):
             )
         except:
             # Too broad.
-            raise HTTPException(500, "An error occurred while removing old entries, aborting operation.")
+            raise HTTPException(500, "An error occurred while removing entries, aborting operation.")
 
 
 async def add_books(username: str, add_list: list[ValidEntry], category: str):

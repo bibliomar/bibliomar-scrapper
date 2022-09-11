@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 from functions.database_functions import mongodb_search_connect
+from models.path_models import ValidIndexesTopic
 from models.query_models import ValidTopics
 import re
 
@@ -57,12 +58,19 @@ async def save_search_index(topic: ValidTopics, lbr_data: list[dict]):
         raise ConnectionError("Couldn't update the specific search indexes array.")
 
 
-async def get_search_index(topic: ValidTopics):
+async def get_search_index(topic: ValidIndexesTopic):
     connection = mongodb_search_connect()
     try:
-        search_indexes: dict = await connection.find_one({"data": "search_indexes"}, {topic})
+        if topic is ValidIndexesTopic.any:
+            search_indexes: dict = await connection.find_one({"data": "search_indexes"})
+            fiction_indexes: list = search_indexes.get("fiction")
+            sci_tech_indexes: list = search_indexes.get("sci-tech")
+            any_indexes = fiction_indexes + sci_tech_indexes
+            return any_indexes
+        else:
+            search_indexes: dict = await connection.find_one({"data": "search_indexes"}, {topic})
+            return search_indexes.get(topic)
 
     except:
         raise HTTPException(500, "Couldn't find indexes for this given topic.")
-    indexes_result = search_indexes.get(topic)
-    return indexes_result
+
