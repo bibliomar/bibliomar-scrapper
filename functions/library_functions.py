@@ -33,26 +33,28 @@ async def get_book(username: str, md5: str):
             {"username": username, "to-read.md5": md5}, {"to-read.$"})
         book_on_backlog: dict = await connection.find_one(
             {"username": username, "backlog.md5": md5}, {"backlog.$"})
-        # Check if any of the values return are not None
-        if book_on_reading or book_on_toread or book_on_backlog:
 
-            valid_entry = book_on_reading.values() if book_on_reading else \
-                book_on_toread.values() if book_on_toread else book_on_backlog.values() if book_on_backlog else None
-            if valid_entry is None:
-                raise HTTPException(400, "No book found with the given MD5.")
+        book_on_categories = [book_on_reading, book_on_toread, book_on_backlog]
+        valid_entry = None
+        for category in book_on_categories:
+            if category:
+                valid_entry = category.values()
 
-            # If they are not, build a list with the values of the valid element.
-            # This list includes an "_id" and "{category-name} keys, but we are only retrieving their values."
-            entry_list = list(valid_entry)
-            # The "{category-name}" value is an array of only one element, because we are projecting on our queries.
-            # So we use [1] to access it's values, and [0] to retrieve the first and only document.
-            result: dict = entry_list[1][0]
-            # We will be performing validation before returning to the user.
-            try:
-                valid_result = ValidEntry(**result)
-                return valid_result
-            except (ValidationError, TypeError):
-                raise HTTPException(500, "Error while validating the results.")
+        if valid_entry is None:
+            raise HTTPException(400, "No book found with the given MD5.")
+
+        # If they are not, build a list with the values of the valid element.
+        # This list includes an "_id" and "{category-name} keys, but we are only retrieving their values."
+        entry_list = list(valid_entry)
+        # The "{category-name}" value is an array of only one element, because we are projecting on our queries.
+        # So we use [1] to access it's values, and [0] to retrieve the first and only document.
+        result: dict = entry_list[1][0]
+        # We will be performing validation before returning to the user.
+        try:
+            valid_result = ValidEntry(**result)
+            return valid_result
+        except (ValidationError, TypeError):
+            raise HTTPException(500, "Error while validating the results.")
 
     except:
         raise HTTPException(400, "Could not find this specific book. This may be an internal error.")
