@@ -38,6 +38,7 @@ async def make_temp_download(md5: str, topic: str):
     downloaded_file = None
     last_err = None
     for index, link in enumerate(d_links.values()):
+        print(link)
         try:
             tried_download = await _download_handler(link)
             temp_file = await _create_temp_file(tried_download, md5)

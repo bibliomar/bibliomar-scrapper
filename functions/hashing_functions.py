@@ -39,5 +39,8 @@ def jwt_validate(jwt_token: str, expire: int):
     # This is just a shorthand.
 
     decoded_jwt = jwt_decode(jwt_token)
-    new_jwt = jwt_encode(decoded_jwt.get("sub"), expire)
+    try:
+        new_jwt = jwt_encode(decoded_jwt.get("sub"), expire)
+    except AttributeError:
+        raise HTTPException(401, "Invalid JWT token.", headers={"WWW-Authenticate": "Bearer"})
     return new_jwt
