@@ -44,7 +44,11 @@ async def create_user(form_data: OAuth2PasswordRequestForm, email: str):
         "email": email,
         "reading": [],
         "to-read": [],
-        "backlog": []
+        "backlog": [],
+        "followers": [],
+        "following": [],
+        "profile_picture": None,
+        "private_profile": False,
     }
 
     await connection.insert_one(user_schema)

@@ -135,9 +135,9 @@ to build a well documented codebase integrated directly in your code.
 Automatic pydantic integration means we can setup various schemas and mostly forget about manually validating.
 
 ### Why Redis?
-This is the main piece of the caching part of the application, and it makes it dead simple to store values that your requests even more fast.
+This is the main piece of the caching part of the application, and it makes it dead simple to store values that your use to make requests even more fast.
 
-FastAPI and Redis have made it really simple to build and scale a backend that doesn't drag the frontend down.
+TL;DR: FastAPI and Redis have made it really simple to build and scale a backend that doesn't drag the frontend down.
 
 ## Caching Implementation
 
