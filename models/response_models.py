@@ -1,7 +1,21 @@
-from fastapi import File
+from typing import Any
+
+from bson import ObjectId
 from pydantic import BaseModel, Field, validator
 
-from models.body_models import ValidEntry
+from models.body_models import ValidEntry, IdentifiedComment, IdentifiedReply
+
+
+class UserProfile(BaseModel):
+    # This class shows two methods of settings default values to fields in Pydantic, lol.
+    followers: list = Field(default=[])
+    following: list = Field(default=[])
+    bio: str = None
+    profile_picture: Any = None
+    private_profile: bool = None
+
+    class Config:
+        validate_assignment = True
 
 
 class SearchResponse(BaseModel):
@@ -23,7 +37,7 @@ class MetadataResponse(BaseModel):
     size: str | None
     description: str | None
 
-    @validator("extension", pre=True)
+    @validator("extension", pre=True, always=True)
     def extension_upper(cls, v):
         if v:
             return v.lower()
@@ -53,3 +67,29 @@ class DownloadLinksResponse(BaseModel):
     c4rex: str | None = Field(None, alias="c4rex.co")
     Crust: str | None
     Pinata: str | None
+
+
+class CommentResponse(IdentifiedComment):
+    id: str
+    num_of_upvotes: int
+    user_has_upvoted: bool
+
+    @validator("id", pre=True, always=True)
+    def str_to_objectid(cls, v):
+        if isinstance(v, ObjectId):
+            return str(v)
+        else:
+            return v
+
+
+class ReplyResponse(IdentifiedReply):
+    id: str
+    num_of_upvotes: int
+    user_has_upvoted: bool
+
+    @validator("id", pre=True, always=True)
+    def str_to_objectid(cls, v):
+        if isinstance(v, ObjectId):
+            return str(v)
+        else:
+            return v

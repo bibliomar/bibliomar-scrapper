@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, Body, Path
+from fastapi import APIRouter, Depends, Body
 from fastapi.params import Query
 
 from models.body_models import ValidEntry, ValidCategories, md5_reg
 from models.response_models import LibraryGetResponse, BookGetResponse
-from functions.hashing_functions import jwt_decode
-from functions.library_functions import add_books, remove_books, get_books, get_book
+from services.security.hashing_functions import jwt_decode
+from services.library.library_functions import add_books, remove_books, get_all_books, get_book
 from routers.v1.user_routes import oauth2_scheme
 
 router = APIRouter(prefix="/v1")
@@ -17,7 +17,7 @@ async def library_get(token: str = Depends(oauth2_scheme)):
     """
     payload = jwt_decode(token)
     sub = payload.get("sub")
-    library = await get_books(sub)
+    library = await get_all_books(sub)
     return library
 
 

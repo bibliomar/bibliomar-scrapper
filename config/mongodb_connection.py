@@ -18,3 +18,10 @@ def mongodb_search_connect():
     database = client["biblioterra"]
     collection = database["search"]
     return collection
+
+
+def mongodb_comments_connect():
+    client = AsyncIOMotorClient(mongodb_provider)
+    database = client["biblioterra"]
+    collection = database["comments"]
+    return collection

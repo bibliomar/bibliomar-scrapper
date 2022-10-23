@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, BackgroundTasks, Path
-from functions.search_functions import fiction_handler, scitech_handler
-from functions.search_index_functions import save_search_index
-from models.body_models import md5_reg
+from fastapi import APIRouter, Depends, HTTPException, Response, BackgroundTasks
+from services.search.search_functions import fiction_handler, scitech_handler
+from services.search.search_index_functions import save_search_index
 from models.query_models import FictionSearchQuery, ScitechSearchQuery, ValidTopics
 from models.response_models import SearchResponse
 

@@ -10,7 +10,7 @@ import aioredis
 import json
 
 
-# All functions receive an SearchParameters instance.
+# All services receive an SearchParameters instance.
 # Requests are cached for 24 hours by default.
 # lbs stands for Libgen Search
 # lbr stands for Libgen Results

@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, Response, Request
+from fastapi import APIRouter, Response, Request
 
 from models.path_models import ValidIndexesTopic
-from models.response_models import IndexesResponse, MetadataResponse
+from models.response_models import MetadataResponse
 from models.query_models import ValidTopics
-from functions.metadata_functions import get_cover, get_metadata, get_dlinks
-from functions.search_index_functions import get_search_index
+from services.search.metadata_functions import get_cover, get_metadata, get_dlinks
+from services.search.search_index_functions import get_search_index
 
 router = APIRouter(
     prefix="/v1"

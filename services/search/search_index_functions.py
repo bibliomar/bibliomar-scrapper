@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from functions.database_functions import mongodb_search_connect
+from config.mongodb_connection import mongodb_search_connect
 from models.path_models import ValidIndexesTopic
 from models.query_models import ValidTopics
 import re

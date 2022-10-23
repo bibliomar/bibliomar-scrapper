@@ -1,8 +1,8 @@
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
-from functions.database_functions import mongodb_connect
-from functions.hashing_functions import hash_create, hash_compare, jwt_encode, jwt_decode
+from config.mongodb_connection import mongodb_connect
+from services.security.hashing_functions import hash_create, hash_compare, jwt_encode, jwt_decode
 import re
 
 # This regex makes sure the password is bigger than 6 and smaller than 16,
@@ -47,6 +47,7 @@ async def create_user(form_data: OAuth2PasswordRequestForm, email: str):
         "backlog": [],
         "followers": [],
         "following": [],
+        "bio": None,
         "profile_picture": None,
         "private_profile": False,
     }

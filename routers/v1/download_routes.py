@@ -1,7 +1,6 @@
-import requests
 from fastapi import APIRouter, Request, Query, BackgroundTasks
 from fastapi.responses import FileResponse
-from functions.download_functions import make_temp_download, remove_temp_download
+from services.search.download_functions import make_temp_download, remove_temp_download
 from models.body_models import md5_reg
 from models.query_models import ValidTopics
 

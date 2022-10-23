@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from routers.v1 import search_routes, metadata_routes, user_routes, library_routes, download_routes
+from routers.v1 import search_routes, metadata_routes, user_routes, library_routes, download_routes, profile_routes, comments_routes
 from keys import preview_url
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -78,6 +78,8 @@ app.include_router(metadata_routes.router)
 app.include_router(user_routes.router)
 app.include_router(library_routes.router)
 app.include_router(download_routes.router)
+app.include_router(profile_routes.router)
+app.include_router(comments_routes.router)
 
 
 @app.get("/")

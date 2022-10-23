@@ -1,14 +1,14 @@
 from fastapi import HTTPException
 from pydantic import ValidationError
 
-from models.body_models import ValidEntry, ValidCategories
-from functions.database_functions import mongodb_connect
+from models.body_models import ValidEntry
+from config.mongodb_connection import mongodb_connect
 
 
-# These functions should only receive valid usernames, authentication is done inside the endpoints.
+# These services should only receive valid usernames, authentication is done inside the endpoints.
 
-async def get_books(username: str):
-    # This functions retrieves all books in a user's library.
+async def get_all_books(username: str):
+    # This services retrieves all books in a user's library.
     connection = mongodb_connect()
     try:
         user_info: dict = await connection.find_one({"username": username})
@@ -34,16 +34,16 @@ async def get_book(username: str, md5: str):
         book_on_backlog: dict = await connection.find_one(
             {"username": username, "backlog.md5": md5}, {"backlog.$"})
 
-        book_on_categories = [book_on_reading, book_on_toread, book_on_backlog]
+        categories = [book_on_reading, book_on_toread, book_on_backlog]
         valid_entry = None
-        for category in book_on_categories:
+        for category in categories:
             if category:
                 valid_entry = category.values()
 
         if valid_entry is None:
             raise HTTPException(400, "No book found with the given MD5.")
 
-        # If they are not, build a list with the values of the valid element.
+        # If there's a valid entry, build a list with it's values.
         # This list includes an "_id" and "{category-name} keys, but we are only retrieving their values."
         entry_list = list(valid_entry)
         # The "{category-name}" value is an array of only one element, because we are projecting on our queries.

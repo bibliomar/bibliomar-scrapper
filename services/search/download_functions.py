@@ -1,10 +1,8 @@
-import os
-
 from fastapi import HTTPException
 from grab_fork_from_libgen.search_config import get_request_headers
-from requests import exceptions, Response
+from requests import exceptions
 from requests_html import AsyncHTMLSession
-from functions.metadata_functions import get_dlinks
+from services.search.metadata_functions import get_dlinks
 
 import aiofiles
 from aiofiles import os as aioos

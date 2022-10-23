@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, requests, responses, Form
+from fastapi import APIRouter, Depends, Form
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
-from functions.user_functions import create_user, login_user, recover_user, change_password
-from functions.hashing_functions import jwt_validate, jwt_encode
+from services.user_functions import create_user, login_user, recover_user, change_password
+from services.security.hashing_functions import jwt_validate, jwt_encode
 from keys import email_url, email_pass, site_url
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from fastapi_mail.schemas import EmailStr
@@ -44,10 +44,9 @@ async def user_signup(form_data: OAuth2PasswordRequestForm = Depends(), email: s
     """
     **WARNING:** <br>
     PLEASE make sure to not use passwords used elsewhere here. <br>
-    Biblioterra is not proprietary software and the security functions used are not hidden. <br>
+    Biblioterra is not proprietary software and the security services used are not hidden. <br>
     All passwords are hashed with
     [pbkdf2 - sha256](https://passlib.readthedocs.io/en/stable/lib/passlib.hash.pbkdf2_digest.html#passlib.hash.pbkdf2_sha256) <br>
-    Only username and password are required.
     """
     user_token = await create_user(form_data, email)
     return {"access_token": user_token, "token_type": "bearer"}
