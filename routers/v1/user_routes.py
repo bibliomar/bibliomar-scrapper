@@ -70,8 +70,8 @@ async def user_recover(email=Form(...)):
 
     recover_token = jwt_encode(user["username"], 3)
     html = f"<h2>Recuperação de senha - Bibliomar</h2><br>" \
-           f"Alguem (provavelmente você) solicitou uma troca de senha para a conta no Bibliomar.<br>" \
-           f"Seu nome de usuario é: {username}" \
+           f"Alguém (provavelmente você) solicitou uma troca de senha para a conta no Bibliomar.<br>" \
+           f"Seu nome de usuario é: {username}<br><br>" \
            f"Para trocar sua senha, basta acessar o link a seguir:<br><br>" \
            f"{site_url}/user/recover?token={recover_token} <br><br>" \
            f"Esse link é válido por 72 horas.<br>" \

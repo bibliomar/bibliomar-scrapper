@@ -31,8 +31,6 @@ async def save_search_index(topic: ValidTopics, lbr_data: list[dict]):
             }
             indexes_list.append(search_index_document)
 
-
-
     try:
         await connection.update_one({"data": "search_indexes"}, {"$addToSet": {topic: {"$each": indexes_list}}})
     except:
@@ -54,4 +52,3 @@ async def get_search_index(topic: ValidIndexesTopic):
 
     except:
         raise HTTPException(500, "Couldn't find indexes for this given topic.")
-

@@ -3,14 +3,29 @@ from fastapi import HTTPException
 from pydantic import ValidationError
 
 from config.mongodb_connection import mongodb_comments_connect
-from models.body_models import IdentifiedComment, Comment, Reply, IdentifiedReply
-from pymongo.results import UpdateResult
+from models.body_models import IdentifiedComment, Comment, Reply, IdentifiedReply, ReplyUpdateRequest, \
+    CommentUpdateRequest
+from datetime import datetime
+
 
 class CommentsService:
 
     def __init__(self):
         self.db_connection = mongodb_comments_connect()
         pass
+
+    @staticmethod
+    def _append_dates(entry: IdentifiedComment | IdentifiedReply):
+        date_format = "%Y-%m-%dT%H:%M:%SZ"
+        # Appends created_at
+        if entry.created_at is None:
+            entry.created_at = datetime.utcnow().strftime(date_format)
+            return entry
+
+        # Appends modified_at
+        else:
+            entry.modified_at = datetime.utcnow().strftime(date_format)
+            return entry
 
     @staticmethod
     def _identify_comment(comment: Comment):
@@ -53,11 +68,11 @@ class CommentsService:
 
     @staticmethod
     def _find_entry_position(entry_list: list[dict], entry_id: str) -> int | None:
-        index = 0
 
+        index = 0
+        # TODO: convert to enumerate
         for db_comment in entry_list:
-            db_comment_model = IdentifiedComment(**db_comment)
-            if db_comment_model.id == entry_id:
+            if db_comment.get("id") == entry_id:
                 return index
             index += 1
 
@@ -106,14 +121,13 @@ class CommentsService:
 
         return False
 
-
-
-    def _find_reply_parent(self, comments_list: list[dict], comment_id: str) -> dict | None:
-        parent_comment_index = self._find_entry_position(comments_list, comment_id)
-        if isinstance(parent_comment_index, int):
+    def find_entry_in_list(self, entry_list: list[dict], entry_id: str) -> tuple[dict, int] | None:
+        # This function returns the actual comment or reply from a given list, and it's position.
+        entry_position = self._find_entry_position(entry_list, entry_id)
+        if isinstance(entry_position, int):
             try:
-                parent_comment = comments_list[parent_comment_index]
-                return parent_comment
+                entry_instance = entry_list[entry_position]
+                return entry_instance, entry_position
             except ValueError:
                 return None
         else:
@@ -128,6 +142,7 @@ class CommentsService:
 
     async def _push_comment(self, md5: str, comment_to_add: IdentifiedComment, position: int = None):
         connection = self.db_connection
+        comment_to_add = self._append_dates(comment_to_add)
         # Transforms ObjectID string to an actual ObjectID
         # Be mindful that embedded documents such as the documents inside an array can't have an actual "_id" field.
         # We are making a custom id field and using it as a reference because ObjectID is fast to create and unique.
@@ -149,22 +164,25 @@ class CommentsService:
             # TODO: add update query description.
             await connection.update_one({"md5": md5},
                                         {"$pull": {"comments.$[elem].attached_responses": {"id": reply_id}}}
-                                        ,array_filters=[{"elem.id": comment_id}])
+                                        , array_filters=[{"elem.id": comment_id}])
         except BaseException:
             raise HTTPException(500, "Reply couldn't be removed. This is probably an internal issue.")
 
     async def _push_reply(self, md5: str, reply_to_add: IdentifiedReply, position: int = None):
         connection = self.db_connection
+        reply_to_add = self._append_dates(reply_to_add)
         try:
             if isinstance(position, int):
                 await connection.update_one(
                     {"md5": md5},
-                    {"$push": {"comments.$[elem].attached_responses": {"$each": [reply_to_add.dict()], "$position": position}}},
-                    array_filters=[{"elem.id": reply_to_add.comment_id}], upsert=False)
+                    {"$push": {"comments.$[elem].attached_responses": {"$each": [reply_to_add.dict()],
+                                                                       "$position": position}}},
+                    array_filters=[{"elem.id": reply_to_add.parent_id}], upsert=False)
+                return
 
             await connection.update_one(
                 {"md5": md5}, {"$push": {"comments.$[elem].attached_responses": reply_to_add.dict()}},
-                array_filters=[{"elem.id": reply_to_add.comment_id}], upsert=False)
+                array_filters=[{"elem.id": reply_to_add.parent_id}], upsert=False)
 
         except BaseException:
             raise HTTPException(500, "Couldn't add reply. This is probably an internal issue.")
@@ -199,6 +217,7 @@ class CommentsService:
             await self._push_comment(md5, identified_comment)
 
         else:
+            identified_comment = self._append_dates(identified_comment)
             book_comments = {
                 "md5": md5,
                 "comments": [identified_comment.dict()]
@@ -208,33 +227,46 @@ class CommentsService:
             except BaseException:
                 raise HTTPException(500, "Comment could not be added. This is probably an internal issue.")
 
-    async def update_comment(self, md5: str, target_comment_id: str, updated_comment: Comment):
+    async def update_comment(self, md5: str, update_request: CommentUpdateRequest):
+        if update_request.updated_content is None and update_request.updated_rating is None:
+            raise HTTPException(400, "Updating is not possible. No changes being made.")
         book_comments = await self.get_possible_comments(md5)
         # Checks if target comment really exists
-        if self._is_entry_in_list(book_comments, target_comment_id):
-            target_comment_position = self._find_entry_position(book_comments, target_comment_id)
-            await self._pull_comment(md5, target_comment_id)
-            identified_comment = self._identify_comment(updated_comment)
-            await self._push_comment(md5, identified_comment, target_comment_position)
+        entry_in_list = self.find_entry_in_list(book_comments, update_request.id)
+        if entry_in_list:
+            target_comment_instance = entry_in_list[0]
+            target_comment_position = entry_in_list[1]
+            updated_comment = IdentifiedComment(**target_comment_instance)
+            if update_request.updated_content is not None:
+                updated_comment.content = update_request.updated_content
+            if update_request.updated_rating is not None:
+                updated_comment.rating = update_request.updated_rating
+
+            await self._pull_comment(md5, updated_comment.id)
+            await self._push_comment(md5, updated_comment, target_comment_position)
+
+
         else:
             raise HTTPException(400, "Target comment doesn't exist on md5's comments' list.")
 
-    async def remove_reply(self, md5: str, reply_to_remove: IdentifiedReply):
+    async def remove_reply(self, md5: str, parent_id: str, reply_id: str):
         book_comments = await self.get_possible_comments(md5)
-        parent_comment = self._find_reply_parent(book_comments, reply_to_remove.comment_id)
-        if parent_comment:
+        parent_comment_info = self.find_entry_in_list(book_comments, parent_id)
+        if self._is_entry_in_list(book_comments, parent_id) and parent_comment_info is not None:
+            parent_comment = parent_comment_info[0]
             parent_comment_replies: list[dict] = parent_comment.get("attached_responses")
-            reply_index = self._find_entry_position(parent_comment_replies, reply_to_remove.id)
-            if reply_index is None:
+            reply_position = self._find_entry_position(parent_comment_replies, reply_id)
+            if reply_position is None:
                 raise HTTPException(400, "No reply found with the given id.")
-            await self._pull_reply(md5, reply_to_remove.comment_id, reply_to_remove.id)
+            await self._pull_reply(md5, parent_id, reply_id)
         else:
             raise HTTPException(400, "No comments match the reply's comment id.")
 
     async def add_reply(self, md5: str, reply_to_add: Reply):
         book_comments = await self.get_possible_comments(md5)
-        parent_comment = self._find_reply_parent(book_comments, reply_to_add.comment_id)
-        if parent_comment:
+        parent_comment_info = self.find_entry_in_list(book_comments, reply_to_add.parent_id)
+        if parent_comment_info is not None:
+            parent_comment = parent_comment_info[0]
             parent_comment_replies: list[dict] = parent_comment.get("attached_responses")
             if self._is_entry_duplicated(parent_comment_replies, reply_to_add):
                 raise HTTPException(400, "Duplicated reply.")
@@ -243,3 +275,22 @@ class CommentsService:
 
         else:
             raise HTTPException(400, "No comments match the reply's comment id.")
+
+    async def update_reply(self, md5: str, reply_update: ReplyUpdateRequest):
+        book_comments = await self.get_possible_comments(md5)
+        parent_comment_info = self.find_entry_in_list(book_comments, reply_update.parent_id)
+        if parent_comment_info is not None:
+            parent_comment = parent_comment_info[0]
+            parent_comment_replies: list[dict] = parent_comment.get("attached_responses")
+            target_reply_info = self.find_entry_in_list(parent_comment_replies, reply_update.id)
+            if target_reply_info is None:
+                raise HTTPException(400, "No response found for the given target id.")
+            target_reply_instance = target_reply_info[0]
+            target_reply_position = target_reply_info[1]
+            updated_reply = IdentifiedReply(**target_reply_instance, content=reply_update.updated_content)
+
+            await self._pull_reply(md5, updated_reply.parent_id, updated_reply.id)
+            await self._push_reply(md5, updated_reply, target_reply_position)
+
+        else:
+            raise HTTPException(400, "No comments match the given target id.")

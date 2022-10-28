@@ -88,7 +88,7 @@ class ReplyResponse(IdentifiedReply):
     user_has_upvoted: bool
 
     @validator("id", pre=True, always=True)
-    def str_to_objectid(cls, v):
+    def objectid_to_string(cls, v):
         if isinstance(v, ObjectId):
             return str(v)
         else:
