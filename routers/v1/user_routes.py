@@ -80,7 +80,14 @@ async def user_recover(email=Form(...)):
 
     message = MessageSchema(subject="Recuperação de senha - Bibliomar", recipients=[user["email"]], html=html)
     fm = FastMail(conf)
-    await fm.send_message(message)
+    print("working as expected")
+    try:
+
+        await fm.send_message(message)
+    except BaseException as e:
+        print(f"error for email: {email_url}")
+        print(e)
+        pass
 
     return 200
 
