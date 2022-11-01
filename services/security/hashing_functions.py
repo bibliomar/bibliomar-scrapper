@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 from passlib.hash import pbkdf2_sha256
+from hashlib import md5
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
 from keys import jwt_secret, jwt_algorithm
@@ -44,3 +45,9 @@ def jwt_validate(jwt_token: str, expire: int):
     except AttributeError:
         raise HTTPException(401, "Invalid JWT token.", headers={"WWW-Authenticate": "Bearer"})
     return new_jwt
+
+
+def email_to_md5(email: str):
+    email = email.strip().lower().encode("utf-8")
+
+    return md5(email).hexdigest()

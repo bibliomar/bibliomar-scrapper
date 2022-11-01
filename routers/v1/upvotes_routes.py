@@ -13,7 +13,8 @@ async def add_comment_upvote(upvote_request: CommentUpvoteRequest,
                              md5: str = Query(..., regex=md5_reg),
                              handler: UpvotesService = Depends(),
                              token: str = Depends(oauth2_scheme)):
-    payload = jwt_decode(token)
+    jwt_decode(token)
+    await handler.add_comment_upvote(upvote_request)
 
 
 
@@ -25,7 +26,7 @@ async def remove_comment_upvote(upvote_request: CommentUpvoteRequest,
     pass
 
 
-@router.post("/upvotes/{md5}", tags=["upvotes"])
+@router.post("/upvotes/{md5}/responses", tags=["upvotes"])
 async def add_reply_upvote(upvote_request: ReplyUpvoteRequest,
                            md5: str = Query(..., regex=md5_reg),
                            handler: UpvotesService = Depends(),

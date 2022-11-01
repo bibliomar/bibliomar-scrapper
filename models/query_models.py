@@ -1,17 +1,28 @@
+from typing import Optional
+
 from fastapi import Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, validator, ValidationError
 from enum import Enum
+
+
+class ValidCriteria(str, Enum):
+    any = "Any"
+    title = "Title"
+    authors = "Author"
+    series = "Series"
 
 
 class ValidTopics(str, Enum):
     fiction = "fiction"
     scitech = "sci-tech"
 
-class ValidCriteria(str, Enum):
-    default = ""
-    title = "title"
-    authors = "authors"
-    series = "series"
+
+class SearchQuery(BaseModel):
+    q: str = Query(..., min_length=3)
+    criteria: ValidCriteria | None = None
+    language: str | None = None
+    format: str | None = None
+    page: int = Query(default=1, ge=1)
 
 
 class ValidWildcardOrPhrase(str, Enum):

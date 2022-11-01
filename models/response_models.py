@@ -1,25 +1,25 @@
-from typing import Any
-
-from bson import ObjectId
 from pydantic import BaseModel, Field, validator
 
-from models.body_models import ValidEntry, IdentifiedComment, IdentifiedReply
+from models.body_models import IdentifiedComment, IdentifiedReply, SearchEntry, LibraryEntry
 
 
 class UserProfile(BaseModel):
-    # This class shows two methods of settings default values to fields in Pydantic, lol.
     followers: list = Field(default=[])
     following: list = Field(default=[])
-    bio: str = None
-    profile_picture: Any = None
-    private_profile: bool = None
+    avatar_url: str = Field(default=None)
+    gravatar_profile_info: dict = Field(default=None)
+    private_profile: bool = Field(default=False)
 
-    class Config:
-        validate_assignment = True
+
+class SearchPaginationInfo(BaseModel):
+    current_page: int
+    has_next_page: bool
+    total_pages: int
 
 
 class SearchResponse(BaseModel):
-    results: list[dict]
+    pagination: SearchPaginationInfo | None
+    results: list[SearchEntry]
 
 
 class MetadataResponse(BaseModel):
@@ -38,7 +38,7 @@ class MetadataResponse(BaseModel):
     description: str | None
 
     @validator("extension", pre=True, always=True)
-    def extension_upper(cls, v):
+    def extension_lower(cls, v):
         if v:
             return v.lower()
         else:
@@ -49,14 +49,14 @@ class IndexesResponse(BaseModel):
     indexes: list[dict]
 
 
-class LibraryGetResponse(BaseModel):
+class UserLibraryResponse(BaseModel):
     reading: list
     to_read: list = Field(alias="to-read")
     backlog: list
 
 
 class BookGetResponse(BaseModel):
-    result: ValidEntry
+    result: LibraryEntry
 
 
 class DownloadLinksResponse(BaseModel):
@@ -74,22 +74,8 @@ class CommentResponse(IdentifiedComment):
     num_of_upvotes: int
     user_has_upvoted: bool
 
-    @validator("id", pre=True, always=True)
-    def str_to_objectid(cls, v):
-        if isinstance(v, ObjectId):
-            return str(v)
-        else:
-            return v
-
 
 class ReplyResponse(IdentifiedReply):
     id: str
     num_of_upvotes: int
     user_has_upvoted: bool
-
-    @validator("id", pre=True, always=True)
-    def objectid_to_string(cls, v):
-        if isinstance(v, ObjectId):
-            return str(v)
-        else:
-            return v

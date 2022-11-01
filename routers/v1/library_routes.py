@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, Body
 from fastapi.params import Query
 
-from models.body_models import ValidEntry, ValidCategories, md5_reg
-from models.response_models import LibraryGetResponse, BookGetResponse
+from models.body_models import LibraryEntry, ValidCategories, md5_reg
+from models.response_models import UserLibraryResponse, BookGetResponse
 from services.security.hashing_functions import jwt_decode
 from services.library.library_functions import add_books, remove_books, get_all_books, get_book
 from routers.v1.user_routes import oauth2_scheme
@@ -10,7 +10,7 @@ from routers.v1.user_routes import oauth2_scheme
 router = APIRouter(prefix="/v1")
 
 
-@router.get("/library/get", tags=["library"], response_model=LibraryGetResponse)
+@router.get("/library/get", tags=["library"], response_model=UserLibraryResponse)
 async def library_get(token: str = Depends(oauth2_scheme)):
     """
     Returns the populated library of a valid user. Needs to be logged in.
@@ -27,13 +27,13 @@ async def library_book_get(token: str = Depends(oauth2_scheme), md5: str = Query
     payload = jwt_decode(token)
     sub = payload.get("sub")
 
-    book: ValidEntry = await get_book(sub, md5)
+    book: LibraryEntry = await get_book(sub, md5)
 
     return {"result": book}
 
 
 @router.post("/library/add/{category}", tags=["library"])
-async def library_add(books: list[ValidEntry], category: ValidCategories, token: str = Depends(oauth2_scheme)):
+async def library_add(books: list[LibraryEntry], category: ValidCategories, token: str = Depends(oauth2_scheme)):
     """
     Use this endpoint to add new books to a user's library. <br>
     You can also use this to move books: <br>

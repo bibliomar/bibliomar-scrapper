@@ -1,15 +1,18 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, BackgroundTasks
+from pydantic import ValidationError
+
 from services.search.search_functions import fiction_handler, scitech_handler
 from services.search.search_index_functions import save_search_index
-from models.query_models import FictionSearchQuery, ScitechSearchQuery, ValidTopics
+from models.query_models import FictionSearchQuery, ScitechSearchQuery, ValidTopics, SearchQuery
 from models.response_models import SearchResponse
+from services.search.search_service import SearchService
 
 router = APIRouter(
     prefix="/v1"
 )
 
 
-@router.get("/search/fiction", tags=["search"], response_model=SearchResponse)
+@router.get("/search/fiction", tags=["search"])
 async def fiction_search(response: Response, bg_tasks: BackgroundTasks,
                          search_parameters: FictionSearchQuery = Depends()):
     # Sends the search_parameters.
@@ -26,7 +29,7 @@ async def fiction_search(response: Response, bg_tasks: BackgroundTasks,
     return {"results": results}
 
 
-@router.get("/search/sci-tech", tags=["search"], response_model=SearchResponse)
+@router.get("/search/sci-tech", tags=["search"])
 async def scitech_search(response: Response, bg_tasks: BackgroundTasks,
                          search_parameters: ScitechSearchQuery = Depends()):
     # Sends the search_parameters.
@@ -41,5 +44,28 @@ async def scitech_search(response: Response, bg_tasks: BackgroundTasks,
 
     bg_tasks.add_task(save_search_index, ValidTopics.scitech, results)
     return {"results": results}
+
+
+# Should be migrated to v2
+@router.get("/neosearch/{topic}", tags=["search"], response_model=SearchResponse)
+async def new_search(response: Response, bg_tasks: BackgroundTasks, handler: SearchService = Depends()):
+    possible_cache = await handler.retrieve_from_cache()
+    if possible_cache:
+        response.headers["Cached"] = "true"
+        print(possible_cache)
+        return possible_cache
+
+    results = await handler.make_search()
+    pagination = await handler.get_pagination_info()
+    try:
+        search_response = SearchResponse(pagination=pagination, results=results)
+    except ValidationError:
+        raise HTTPException(500, "Couldn't validate search's response.")
+
+    bg_tasks.add_task(handler.save_on_cache, search_response)
+
+    return search_response
+
+
 
 

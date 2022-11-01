@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from pydantic import ValidationError
 
-from models.body_models import ValidEntry
+from models.body_models import LibraryEntry
 from config.mongodb_connection import mongodb_connect
 
 
@@ -51,7 +51,7 @@ async def get_book(username: str, md5: str):
         result: dict = entry_list[1][0]
         # We will be performing validation before returning to the user.
         try:
-            valid_result = ValidEntry(**result)
+            valid_result = LibraryEntry(**result)
             return valid_result
         except (ValidationError, TypeError):
             raise HTTPException(500, "Error while validating the results.")
@@ -74,7 +74,7 @@ async def remove_books(username: str, remove_list: list[str]):
             raise HTTPException(500, "An error occurred while removing entries, aborting operation.")
 
 
-async def add_books(username: str, add_list: list[ValidEntry], category: str):
+async def add_books(username: str, add_list: list[LibraryEntry], category: str):
     """
     Adds a book to a category, if it already exists, remove it before adding it again.
     Can also be used for updating.

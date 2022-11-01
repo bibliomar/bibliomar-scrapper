@@ -62,7 +62,7 @@ class TestComments(IsolatedAsyncioTestCase):
             else:
                 raise e
 
-    async def test_remove_reply_update(self):
+    async def test_remove_reply_upvote(self):
         parent_id = await self.get_test_comment_id()
         reply_id = await self.get_test_reply_id()
 

@@ -19,9 +19,26 @@ class ValidCategories(str, Enum):
     backlog = "backlog"
 
 
-class ValidEntry(BaseModel):
-    # Defines how a valid book entry should look like.
+class CoverInfo(BaseModel):
+    libgen_main: str | None = Field(default=None)
+    libgen_rocks: str | None = Field(default=None)
 
+
+class SearchEntry(BaseModel):
+    authors: str
+    title: str
+    md5: str = Field(..., regex=md5_reg)
+    topic: str
+    extension: str
+    size: str
+    language: str | None
+    cover_info: CoverInfo | None
+
+
+
+
+class LibraryEntry(BaseModel):
+    # Defines how a valid book entry in library should look like.
     authors: str = Field(..., alias="author(s)")
     series: str | None
     title: str
@@ -43,6 +60,23 @@ class RemoveBooks(BaseModel):
     md5_list: list[str] = Body(..., regex=md5_reg)
 
 
+class User(BaseModel):
+    username: str
+    password: str
+    email: str
+    gravatar_hash: str | None = Field(default=None)
+    reading: list[dict]
+    to_read: list[dict] = Field(..., alias="to-read")
+    backlog: list[dict]
+    followers: list[str] = Field(default=[])
+    following: list[str] = Field(default=[])
+    bio: str | None = Field(default=None)
+    private_profile: bool | None = Field(default=False)
+
+    class Config:
+        allow_population_by_field_name = True
+
+
 class Comment(BaseModel):
     """
     Represents a new comment:
@@ -57,6 +91,7 @@ class CommentUpdateRequest(BaseModel):
     id: str
     updated_rating: int | None = Field(default=None, le=5, ge=0)
     updated_content: str | None = Field(default=None)
+
 
 class CommentUpvoteRequest(BaseModel):
     md5: str
@@ -74,6 +109,7 @@ class ReplyUpdateRequest(BaseModel):
     id: str
     parent_id: str
     updated_content: str
+
 
 class ReplyUpvoteRequest(BaseModel):
     md5: str
@@ -115,9 +151,3 @@ class IdentifiedReply(Reply):
             return str(v)
         else:
             return v
-
-
-
-
-
-

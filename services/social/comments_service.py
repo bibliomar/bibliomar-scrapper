@@ -20,12 +20,12 @@ class CommentsService:
         # Appends created_at
         if entry.created_at is None:
             entry.created_at = datetime.utcnow().strftime(date_format)
-            return entry
 
         # Appends modified_at
-        else:
+        if entry.modified_at is None:
             entry.modified_at = datetime.utcnow().strftime(date_format)
-            return entry
+
+        return entry
 
     @staticmethod
     def _identify_comment(comment: Comment):
@@ -287,7 +287,8 @@ class CommentsService:
                 raise HTTPException(400, "No response found for the given target id.")
             target_reply_instance = target_reply_info[0]
             target_reply_position = target_reply_info[1]
-            updated_reply = IdentifiedReply(**target_reply_instance, content=reply_update.updated_content)
+            updated_reply = IdentifiedReply(**target_reply_instance)
+            updated_reply.content = reply_update.updated_content
 
             await self._pull_reply(md5, updated_reply.parent_id, updated_reply.id)
             await self._push_reply(md5, updated_reply, target_reply_position)

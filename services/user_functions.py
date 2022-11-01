@@ -1,8 +1,10 @@
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import ValidationError
 
 from config.mongodb_connection import mongodb_connect
-from services.security.hashing_functions import hash_create, hash_compare, jwt_encode, jwt_decode
+from models.body_models import User
+from services.security.hashing_functions import hash_create, hash_compare, jwt_encode, jwt_decode, email_to_md5
 import re
 
 # This regex makes sure the password is bigger than 6 and smaller than 16,
@@ -14,6 +16,8 @@ email_reg = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a
 
 
 async def create_user(form_data: OAuth2PasswordRequestForm, email: str):
+    # Sanitizes email
+    email = email.strip().lower()
     # connection is an AsyncIOMotorCollection instance.
     connection = mongodb_connect()
     # Checks if username and password are valid:
@@ -28,6 +32,8 @@ async def create_user(form_data: OAuth2PasswordRequestForm, email: str):
     if not re.match(email_reg, email):
         raise HTTPException(400, "Email is invalid.")
 
+
+    # TODO: convert into single request (optional, motor already optimizes this.)
     # Checks if username or email_url already exists:
     user_check = await connection.find_one({"username": form_data.username})
     email_check = await connection.find_one({"email": email})
@@ -36,21 +42,26 @@ async def create_user(form_data: OAuth2PasswordRequestForm, email: str):
 
     # If it doesn't:
     hashed_pwd = hash_create(form_data.password)
+    gravatar_hash = email_to_md5(email)
 
     # This is the user's base schema.
     user_schema = {
         "username": form_data.username,
         "password": hashed_pwd,
         "email": email,
+        "gravatar_hash": gravatar_hash,
         "reading": [],
         "to-read": [],
         "backlog": [],
         "followers": [],
         "following": [],
         "bio": None,
-        "profile_picture": None,
         "private_profile": False,
     }
+    try:
+        user_as_model = User(**user_schema)
+    except ValidationError as e:
+        print(e)
 
     await connection.insert_one(user_schema)
     token = jwt_encode(form_data.username, 3)

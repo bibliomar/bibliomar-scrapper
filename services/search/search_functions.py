@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from grab_fork_from_libgen import AIOLibgenSearch
 from grab_fork_from_libgen.exceptions import InvalidSearchParameter, LibgenError, MetadataError
 from models.query_models import FictionSearchQuery, ScitechSearchQuery
-from models.body_models import ValidEntry
+from models.body_models import LibraryEntry
 from typing import OrderedDict
 from keys import redis_provider
 

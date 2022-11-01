@@ -2,7 +2,8 @@ from unittest import IsolatedAsyncioTestCase
 
 from fastapi import HTTPException
 
-from models.body_models import Comment, Reply, IdentifiedReply, IdentifiedComment, CommentUpdateRequest
+from models.body_models import Comment, Reply, IdentifiedReply, IdentifiedComment, CommentUpdateRequest, \
+    ReplyUpdateRequest
 from services.social.comments_service import CommentsService
 
 
@@ -74,8 +75,10 @@ class TestComments(IsolatedAsyncioTestCase):
         test_reply_id = test_reply_content["id"]
 
         test_reply = Reply(**test_reply_content)
-        test_reply.content = "conteudo modificado."
-        await self.service.update_reply(self.test_md5, test_reply_id, test_reply)
+        updated_content = "conteudo modificado."
+        update_request = ReplyUpdateRequest(id=test_reply_id,
+                                            parent_id=test_reply.parent_id, updated_content=updated_content)
+        await self.service.update_reply(self.test_md5, update_request)
 
 
     async def test_remove_reply(self):
