@@ -70,20 +70,26 @@ class ValidRes(str, Enum):
     # Pydantic converts these to str automatically.
     results25 = 25
     results50 = 50
+    results75 = 75
     results100 = 100
 
 
-class FictionSearchQuery(BaseModel):
+class CommentsQuery(BaseModel):
+    sort: CommentSort | None = Query(None)
+    mode: SortMode | None = Query(None)
+
+
+class LegacyFictionSearchQuery(BaseModel):
     # None values are excluded in search_functions.
     q: str = Query(..., min_length=3)
-    criteria: ValidCriteria | None
+    criteria: str | None
     language: str | None
     format: str | None
     wildcard: ValidWildcardOrPhrase | None
     page: int = 1
 
 
-class ScitechSearchQuery(BaseModel):
+class LegacyScitechSearchQuery(BaseModel):
     # None values are excluded in search_functions.
     q: str = Query(..., min_length=3)
     sort: ValidSort | None
@@ -92,8 +98,3 @@ class ScitechSearchQuery(BaseModel):
     phrase: ValidWildcardOrPhrase | None
     res: ValidRes | None
     page: int = 1
-
-
-class CommentsQuery(BaseModel):
-    sort: CommentSort | None = Query(None)
-    mode: SortMode | None = Query(None)

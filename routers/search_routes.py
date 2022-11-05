@@ -3,7 +3,7 @@ from pydantic import ValidationError
 
 from services.search.search_functions import fiction_handler, scitech_handler
 from services.search.search_index_functions import save_search_index
-from models.query_models import FictionSearchQuery, ScitechSearchQuery, ValidTopics, SearchQuery
+from models.query_models import LegacyFictionSearchQuery, LegacyScitechSearchQuery, ValidTopics, SearchQuery
 from models.response_models import SearchResponse
 from services.search.search_service import SearchService
 
@@ -13,7 +13,7 @@ router = APIRouter(
 
 @router.get("/v1/search/fiction", tags=["search"])
 async def fiction_search(response: Response, bg_tasks: BackgroundTasks,
-                         search_parameters: FictionSearchQuery = Depends()):
+                         search_parameters: LegacyFictionSearchQuery = Depends()):
     # Sends the search_parameters.
     results_handler: tuple = await fiction_handler(search_parameters)
     results: list = results_handler[0]
@@ -30,7 +30,7 @@ async def fiction_search(response: Response, bg_tasks: BackgroundTasks,
 
 @router.get("/v1/search/sci-tech", tags=["search"])
 async def scitech_search(response: Response, bg_tasks: BackgroundTasks,
-                         search_parameters: ScitechSearchQuery = Depends()):
+                         search_parameters: LegacyScitechSearchQuery = Depends()):
     # Sends the search_parameters.
     results_handler: tuple = await scitech_handler(search_parameters)
     results: list = results_handler[0]

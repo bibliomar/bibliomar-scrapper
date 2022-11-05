@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from grab_fork_from_libgen import AIOLibgenSearch
 from grab_fork_from_libgen.exceptions import InvalidSearchParameter, LibgenError, MetadataError
-from models.query_models import FictionSearchQuery, ScitechSearchQuery
+from models.query_models import LegacyFictionSearchQuery, LegacyScitechSearchQuery
 from models.body_models import LibraryEntry
 from typing import OrderedDict
 from keys import redis_provider
@@ -45,7 +45,7 @@ def format_item(lbr_data: OrderedDict):
     return results
 
 
-async def fiction_handler(search_parameters: FictionSearchQuery):
+async def fiction_handler(search_parameters: LegacyFictionSearchQuery):
     search_parameters = search_parameters.dict(exclude_none=True)
     if search_parameters.get("language"):
         # .get is used because it doesn't raise an error.
@@ -101,7 +101,7 @@ async def fiction_handler(search_parameters: FictionSearchQuery):
     return libgen_results, cached
 
 
-async def scitech_handler(search_parameters: ScitechSearchQuery):
+async def scitech_handler(search_parameters: LegacyScitechSearchQuery):
     search_parameters = search_parameters.dict(exclude_none=True)
 
     try:
