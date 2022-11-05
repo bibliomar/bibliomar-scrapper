@@ -1,15 +1,17 @@
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException, Depends, Query
+from fastapi.logger import logger as fastlog
 from pydantic import ValidationError
 
 from config.mongodb_connection import mongodb_comments_connect
-from models.body_models import IdentifiedComment, CommentUpvoteRequest, ReplyUpvoteRequest, IdentifiedReply
+from models.body_models import IdentifiedComment, CommentUpvoteRequest, ReplyUpvoteRequest, IdentifiedReply, md5_reg
 from services.social.comments_service import CommentsService
 
 
 class UpvotesService:
-    def __init__(self):
+    def __init__(self, md5: str = Query(..., regex=md5_reg)):
         self._db_connection = mongodb_comments_connect()
         self._comments_service = CommentsService()
+        self.md5 = md5
 
     @staticmethod
     def _user_has_upvoted(upvotes_list: list[str], username: str) -> bool:
@@ -20,7 +22,7 @@ class UpvotesService:
             return False
 
     async def _get_comment_upvotes(self, request: CommentUpvoteRequest) -> list[str]:
-        possible_comments = await self._comments_service.get_possible_comments(request.md5)
+        possible_comments = await self._comments_service.get_possible_comments()
         comment_info = self._comments_service.find_entry_in_list(possible_comments, request.id)
         if comment_info:
             comment_instance = comment_info[0]
@@ -31,7 +33,7 @@ class UpvotesService:
             raise HTTPException(400, "Comment doesn't exist on this specific MD5.")
 
     async def _get_reply_upvotes(self, request: ReplyUpvoteRequest) -> list[str]:
-        possible_comments = await self._comments_service.get_possible_comments(request.md5)
+        possible_comments = await self._comments_service.get_possible_comments()
         parent_info = self._comments_service.find_entry_in_list(possible_comments, request.parent_id)
         if parent_info is not None:
             parent_instance = IdentifiedComment(**parent_info[0])
@@ -52,7 +54,7 @@ class UpvotesService:
             raise HTTPException(400, "User has already upvoted this comment.")
         try:
             await connection.update_one(
-                {"md5": request.md5}, {"$push": {"comments.$[elem].upvotes": request.username}},
+                {"md5": self.md5}, {"$push": {"comments.$[elem].upvotes": request.username}},
                 array_filters=[{"elem.id": request.id}], upsert=False)
         except BaseException as e:
             raise e
@@ -65,7 +67,7 @@ class UpvotesService:
 
         try:
             await connection.update_one(
-                {"md5": request.md5}, {"$pull": {"comments.$[elem].upvotes": request.username}},
+                {"md5": self.md5}, {"$pull": {"comments.$[elem].upvotes": request.username}},
                 array_filters=[{"elem.id": request.id}], upsert=False)
         except BaseException as e:
             raise e
@@ -77,12 +79,13 @@ class UpvotesService:
             raise HTTPException(400, "User has already upvoted this reply.")
         try:
             await connection.update_one(
-                {"md5": request.md5},
+                {"md5": self.md5},
                 {"$push": {"comments.$[comment].attached_responses.$[reply].upvotes": request.username}},
                 array_filters=[{"comment.id": request.parent_id}, {"reply.id": request.id}], upsert=False)
 
         except BaseException as e:
-            raise e
+            print(e)
+            HTTPException(500, "Error while trying to update the reply upvotes. ")
 
     async def remove_reply_upvote(self, request: ReplyUpvoteRequest):
         connection = self._db_connection
@@ -92,7 +95,7 @@ class UpvotesService:
 
         try:
             await connection.update_one(
-                {"md5": request.md5},
+                {"md5": self.md5},
                 {"$pull": {"comments.$[comment].attached_responses.$[reply].upvotes": request.username}},
                 array_filters=[{"comment.id": request.parent_id}, {"reply.id": request.id}], upsert=False)
 

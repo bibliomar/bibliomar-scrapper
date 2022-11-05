@@ -5,7 +5,7 @@ from models.body_models import LibraryEntry, ValidCategories, md5_reg
 from models.response_models import UserLibraryResponse, BookGetResponse
 from services.security.hashing_functions import jwt_decode
 from services.library.library_functions import add_books, remove_books, get_all_books, get_book
-from routers.v1.user_routes import oauth2_scheme
+from routers.user_routes import oauth2_scheme
 
 router = APIRouter(prefix="/v1")
 

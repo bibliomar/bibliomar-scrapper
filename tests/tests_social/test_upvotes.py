@@ -14,7 +14,7 @@ class TestComments(IsolatedAsyncioTestCase):
         self.test_md5 = "TEST3030303030303030303030303030"
 
     async def get_comments(self):
-        return await self.comments_service.get_possible_comments(self.test_md5)
+        return await self.comments_service.get_possible_comments()
 
     async def get_test_comment_id(self):
         get = await self.get_comments()

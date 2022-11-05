@@ -1,8 +1,12 @@
-from fastapi import APIRouter, Response, Request
+from fastapi import APIRouter, Response, Request, Depends
+from starlette.background import BackgroundTasks
 
+from models.body_models import Metadata
 from models.path_models import ValidIndexesTopic
-from models.response_models import MetadataResponse
+from models.response_models import LegacyMetadataResponse
 from models.query_models import ValidTopics
+from services.cover.cover_service import TempCoverService
+from services.metadata.metadata_service import MetadataService
 from services.search.metadata_functions import get_cover, get_metadata, get_dlinks
 from services.search.search_index_functions import get_search_index
 
@@ -26,7 +30,19 @@ async def get_cover_by_md5(md5: str, response: Response):
     return results
 
 
-@router.get("/metadata/{topic}/{md5}", tags=["metadata"], response_model=MetadataResponse)
+@router.get("/cover/{topic}/md5", tags=["metadata"])
+async def new_get_cover(bg_tasks: BackgroundTasks, handler: TempCoverService = Depends(), ):
+    cached_cover = await handler.retrieve_from_cache()
+    if cached_cover:
+        return cached_cover
+
+    result = await handler.get_cover()
+    if result:
+        bg_tasks.add_task(handler.save_on_cache, result)
+        return result
+
+
+@router.get("/metadata/{topic}/{md5}", tags=["metadata"], response_model=LegacyMetadataResponse)
 async def get_metadata_by_md5_and_topic(topic: ValidTopics, md5: str, request: Request, response: Response):
     """
     Given a valid topic and a md5, searches for a file's metadata. <br>
@@ -39,6 +55,15 @@ async def get_metadata_by_md5_and_topic(topic: ValidTopics, md5: str, request: R
     metadata_results = metadata_handler[0]
     # get_metadata returns a tuple with the download links and description.
     return metadata_results
+
+
+@router.get("/neometadata/{topic}/{md5}", tags=["metadata"], response_model=dict)
+async def new_metadata(handler: MetadataService = Depends()):
+    """
+    Given a valid topic and a md5, searches for a file's metadata. <br>
+    """
+    result = await handler.retrieve_metadata()
+    return result.dict()
 
 
 @router.get("/downloads/{topic}/{md5}", tags=["metadata"], response_model=dict)

@@ -1,11 +1,14 @@
 from fastapi import HTTPException
 from pydantic import ValidationError
+import logging
 
-from models.body_models import LibraryEntry
+from models.body_models import LibraryEntry, ValidCategories
 from config.mongodb_connection import mongodb_connect
 
-
 # These services should only receive valid usernames, authentication is done inside the endpoints.
+
+logger = logging.getLogger("biblioterra")
+
 
 async def get_all_books(username: str):
     # This services retrieves all books in a user's library.
@@ -54,9 +57,11 @@ async def get_book(username: str, md5: str):
             valid_result = LibraryEntry(**result)
             return valid_result
         except (ValidationError, TypeError):
-            raise HTTPException(500, "Error while validating the results.")
+            logger.warning(f"Invalid entry {result} in library of user '{username}'")
+            raise HTTPException(500, "Invalid entry in user's library.")
 
-    except:
+    except BaseException as e:
+        print(e)
         raise HTTPException(400, "Could not find this specific book. This may be an internal error.")
 
 
@@ -69,22 +74,28 @@ async def remove_books(username: str, remove_list: list[str]):
                 {"username": username},
                 {"$pull": {"reading": {"md5": md5}, "to-read": {"md5": md5}, "backlog": {"md5": md5}}}
             )
-        except:
+
+        except BaseException as e:
+            print(e)
             # Too broad.
             raise HTTPException(500, "An error occurred while removing entries, aborting operation.")
 
 
-async def add_books(username: str, add_list: list[LibraryEntry], category: str):
+async def add_books(username: str, add_list: list[LibraryEntry], category: ValidCategories):
     """
     Adds a book to a category, if it already exists, remove it before adding it again.
     Can also be used for updating.
     """
 
     connection = mongodb_connect()
+    if len(add_list) == 0:
+        raise HTTPException(400, "No book being added.")
     # Adds every md5 in add_list to a md5_list
     md5_list = []
     book_list = []
     for book in add_list:
+        if book.category is None:
+            book.category = category
         book_list.append(book.dict())
         md5_list.append(book.md5)
 

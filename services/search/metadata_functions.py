@@ -2,7 +2,7 @@ import json
 
 from grab_fork_from_libgen import AIOMetadata
 from grab_fork_from_libgen.exceptions import MetadataError
-from models.response_models import MetadataResponse, DownloadLinksResponse
+from models.response_models import LegacyMetadataResponse, DownloadLinksResponse
 from pydantic import ValidationError
 from keys import redis_provider
 from fastapi import HTTPException
@@ -10,6 +10,7 @@ import aioredis
 
 
 async def get_cover(md5: str):
+
     try:
         # This environment key is for Heroku Redis.
         redis = aioredis.from_url(redis_provider, decode_responses=True)
@@ -71,7 +72,7 @@ async def get_metadata(topic: str, md5: str):
             cached = "true"
             await redis.close()
             try:
-                possible_metadata = MetadataResponse(**possible_metadata)
+                possible_metadata = LegacyMetadataResponse(**possible_metadata)
                 return possible_metadata, cached
             except (ValidationError, TypeError):
                 pass
@@ -94,7 +95,7 @@ async def get_metadata(topic: str, md5: str):
 
     cached = "false"
     try:
-        response = MetadataResponse(**metadata)
+        response = LegacyMetadataResponse(**metadata)
         return response, cached
     except ValidationError:
         raise HTTPException(500, "Error validating metadata.")

@@ -8,11 +8,10 @@ from models.response_models import SearchResponse
 from services.search.search_service import SearchService
 
 router = APIRouter(
-    prefix="/v1"
 )
 
 
-@router.get("/search/fiction", tags=["search"])
+@router.get("/v1/search/fiction", tags=["search"])
 async def fiction_search(response: Response, bg_tasks: BackgroundTasks,
                          search_parameters: FictionSearchQuery = Depends()):
     # Sends the search_parameters.
@@ -29,7 +28,7 @@ async def fiction_search(response: Response, bg_tasks: BackgroundTasks,
     return {"results": results}
 
 
-@router.get("/search/sci-tech", tags=["search"])
+@router.get("/v1/search/sci-tech", tags=["search"])
 async def scitech_search(response: Response, bg_tasks: BackgroundTasks,
                          search_parameters: ScitechSearchQuery = Depends()):
     # Sends the search_parameters.
@@ -47,12 +46,10 @@ async def scitech_search(response: Response, bg_tasks: BackgroundTasks,
 
 
 # Should be migrated to v2
-@router.get("/neosearch/{topic}", tags=["search"], response_model=SearchResponse)
+@router.get("/v2/neosearch/{topic}", tags=["search"], response_model=SearchResponse)
 async def new_search(response: Response, bg_tasks: BackgroundTasks, handler: SearchService = Depends()):
     possible_cache = await handler.retrieve_from_cache()
     if possible_cache:
-        response.headers["Cached"] = "true"
-        print(possible_cache)
         return possible_cache
 
     results = await handler.make_search()
@@ -65,7 +62,3 @@ async def new_search(response: Response, bg_tasks: BackgroundTasks, handler: Sea
     bg_tasks.add_task(handler.save_on_cache, search_response)
 
     return search_response
-
-
-
-

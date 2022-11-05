@@ -22,7 +22,7 @@ class SearchResponse(BaseModel):
     results: list[SearchEntry]
 
 
-class MetadataResponse(BaseModel):
+class LegacyMetadataResponse(BaseModel):
     title: str | None
     authors: str | None
     series: str | None
@@ -67,15 +67,3 @@ class DownloadLinksResponse(BaseModel):
     c4rex: str | None = Field(None, alias="c4rex.co")
     Crust: str | None
     Pinata: str | None
-
-
-class CommentResponse(IdentifiedComment):
-    id: str
-    num_of_upvotes: int
-    user_has_upvoted: bool
-
-
-class ReplyResponse(IdentifiedReply):
-    id: str
-    num_of_upvotes: int
-    user_has_upvoted: bool

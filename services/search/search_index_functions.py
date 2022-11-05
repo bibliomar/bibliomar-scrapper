@@ -6,30 +6,29 @@ import re
 
 
 async def save_search_index(topic: ValidTopics, lbr_data: list[dict]):
-    # This will save the first 10 search results for indexing.
+    # Saves search results for indexing
     connection = mongodb_search_connect()
     indexes_list = []
-    language_array = ["Portuguese", "English"]
 
     for book in lbr_data:
-        if book.get("language") in language_array:
-            regex = "isbn.*$|asin.*$"
-            reg_compiled = re.compile(regex, re.IGNORECASE)
-            title: str = book.get("title")
-            f_title: str = title.capitalize()
-            last_char: str = ""
-            for char in f_title:
-                if not (char.isalnum()):
-                    if (char.isspace()) and (last_char.isspace()):
-                        f_title = f_title.replace(char, "")
-                last_char = char
+        regex = "isbn.*$|asin.*$"
+        reg_compiled = re.compile(regex, re.IGNORECASE)
+        title: str = book.get("title")
+        f_title: str = title.capitalize()
+        last_char: str = ""
+        for char in f_title:
+            if not (char.isalnum()):
+                if (char.isspace()) and (last_char.isspace()):
+                    f_title = f_title.replace(char, "")
+            last_char = char
 
-            f_title = re.sub(reg_compiled, "", f_title)
-            search_index_document = {
-                "title": f_title,
-                "topic": book.get("topic")
-            }
-            indexes_list.append(search_index_document)
+        f_title = re.sub(reg_compiled, "", f_title)
+        search_index_document = {
+            "title": f_title,
+            "topic": book.get("topic"),
+            "md5": book.get("md5")
+        }
+        indexes_list.append(search_index_document)
 
     try:
         await connection.update_one({"data": "search_indexes"}, {"$addToSet": {topic: {"$each": indexes_list}}})

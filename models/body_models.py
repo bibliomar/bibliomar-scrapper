@@ -6,6 +6,8 @@ from enum import Enum
 
 # This ensures that md5 is a valid 32 hexadecimal string.
 md5_reg = "^[0-9a-fA-F]{32}$"
+# Date format that should be used. It's mainly made to work with Javascript Date().
+date_format = "%Y-%m-%dT%H:%M:%SZ"
 
 
 class CommentOrReply(str, Enum):
@@ -19,11 +21,6 @@ class ValidCategories(str, Enum):
     backlog = "backlog"
 
 
-class CoverInfo(BaseModel):
-    libgen_main: str | None = Field(default=None)
-    libgen_rocks: str | None = Field(default=None)
-
-
 class SearchEntry(BaseModel):
     authors: str
     title: str
@@ -32,9 +29,8 @@ class SearchEntry(BaseModel):
     extension: str
     size: str
     language: str | None
-    cover_info: CoverInfo | None
-
-
+    cover_url: str | None
+    relevance: int | None = Field(None)  # Relevance of a entry based on the search.
 
 
 class LibraryEntry(BaseModel):
@@ -49,10 +45,33 @@ class LibraryEntry(BaseModel):
     language: str | None
     # Only useful for keeping track of a user's progress in a book, with epubcifi.
     progress: str | None
-    category: str | None
+    category: ValidCategories | None
 
     class Config:
         allow_population_by_field_name = True
+
+
+class Metadata(BaseModel):
+    md5: str = Field(..., alias="MD5")
+    title: str = Field(..., alias="Title")
+    authors: str = Field(..., alias="Author")
+    topic: str
+    series: str | None = Field(None, alias="Series")
+    edition: str | None = Field(None, alias="Edition")
+    language: str | None = Field(None, alias="Language")
+    year: str | None = Field(None, alias="Year")
+    publisher: str | None = Field(None, alias="Publisher")
+    city: str | None = Field(None, alias="City")
+    pages: int | None = Field(None, alias="Pages")
+    volume: str | None = Field(None, alias="VolumeInfo")
+    isbn: str | None = Field(None)
+    asin: str | None = Field(None, alias="ASIN")
+    googlebooks_id: str | None = Field(None, alias="GooglebookID")
+    extension: str | None = Field(None, alias="Extension")
+    size: str | None = Field(None)
+    cover_url: str | None = Field(None)
+    description: str | None = Field(None, alias="Descr")
+    added_at: str | None = Field(None)
 
 
 class RemoveBooks(BaseModel):
@@ -88,13 +107,13 @@ class Comment(BaseModel):
 
 
 class CommentUpdateRequest(BaseModel):
+    username: str
     id: str
     updated_rating: int | None = Field(default=None, le=5, ge=0)
     updated_content: str | None = Field(default=None)
 
 
 class CommentUpvoteRequest(BaseModel):
-    md5: str
     username: str
     id: str
 
@@ -106,13 +125,13 @@ class Reply(BaseModel):
 
 
 class ReplyUpdateRequest(BaseModel):
+    username: str
     id: str
     parent_id: str
     updated_content: str
 
 
 class ReplyUpvoteRequest(BaseModel):
-    md5: str
     username: str
     id: str
     parent_id: str
@@ -129,7 +148,7 @@ class IdentifiedComment(Comment):
         arbitrary_types_allowed = True
 
     @validator("id", pre=True, always=True)
-    def str_to_objectid(cls, v):
+    def objectid_to_str(cls, v):
         if isinstance(v, ObjectId):
             return str(v)
         else:

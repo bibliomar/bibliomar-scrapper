@@ -1,11 +1,15 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from routers.v1 import search_routes, metadata_routes, user_routes, library_routes, download_routes, profile_routes, comments_routes
+from routers import upvotes_routes, library_routes, search_routes, user_routes, comments_routes, metadata_routes, \
+    profile_routes, download_routes
 from keys import preview_url
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.errors import RateLimitExceeded
+import logging
+from logging.config import dictConfig
+from config.logger_config import LoggerConfig
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["3/2 seconds"])
 
@@ -57,12 +61,15 @@ tags_metadata = [
     }
 ]
 
+dictConfig(LoggerConfig().dict())
+logger = logging.getLogger("biblioterra")
+
 app = FastAPI(
     title="Biblioterra",
     version="1.0.0",
-    openapi_url="/v1/openapi.json",
-    docs_url="/v1/docs",
-    redoc_url="/v1/redocs",
+    openapi_url="/openapi.json",
+    docs_url="/docs",
+    redoc_url="/redocs",
     openapi_tags=tags_metadata
 )
 
@@ -80,11 +87,13 @@ app.include_router(library_routes.router)
 app.include_router(download_routes.router)
 app.include_router(profile_routes.router)
 app.include_router(comments_routes.router)
+app.include_router(upvotes_routes.router)
 
 
 @app.get("/")
 async def root(request: Request):
-    return "See /v1/docs for usage."
+    logger.debug("Logging is working as expected.")
+    return "See /docs for usage."
 
 
 @app.head("/")

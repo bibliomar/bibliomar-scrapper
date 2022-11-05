@@ -5,6 +5,12 @@ from pydantic import BaseModel, Field, validator, ValidationError
 from enum import Enum
 
 
+class CommentSort(str, Enum):
+    date = "date"
+    upvotes = "upvotes"
+    rating = "rating"
+
+
 class ValidCriteria(str, Enum):
     any = "Any"
     title = "Title"
@@ -19,9 +25,10 @@ class ValidTopics(str, Enum):
 
 class SearchQuery(BaseModel):
     q: str = Query(..., min_length=3)
-    criteria: ValidCriteria | None = None
-    language: str | None = None
-    format: str | None = None
+    criteria: ValidCriteria | None = Query(None)
+    language: str | None = Query(None)
+    format: str | None = Query(None)
+    results_per_page: int = Query(25, ge=25, le=100)
     page: int = Query(default=1, ge=1)
 
 
@@ -41,7 +48,7 @@ class ValidSort(str, Enum):
     year = "year"
 
 
-class ValidSortMode(str, Enum):
+class SortMode(str, Enum):
     asc = "ASC"
     desc = "DESC"
 
@@ -80,8 +87,13 @@ class ScitechSearchQuery(BaseModel):
     # None values are excluded in search_functions.
     q: str = Query(..., min_length=3)
     sort: ValidSort | None
-    sortmode: ValidSortMode | None
+    sortmode: SortMode | None
     column: ValidColumn | None
     phrase: ValidWildcardOrPhrase | None
     res: ValidRes | None
     page: int = 1
+
+
+class CommentsQuery(BaseModel):
+    sort: CommentSort | None = Query(None)
+    mode: SortMode | None = Query(None)
