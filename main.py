@@ -16,7 +16,7 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["3/2 seconds"])
 if preview_url is None:
     preview_url = "http://localhost:3002"
 
-origins = [
+origins = (
     "http://localhost:3000",
     "http://localhost:3001"
     "https://bibliomar.netlify.app",
@@ -26,7 +26,7 @@ origins = [
     "https://www.bibliomar.site",
     "http://www.bibliomar.site",
     preview_url
-]
+)
 
 tags_metadata = [
     {
@@ -39,7 +39,7 @@ tags_metadata = [
     },
     {
         "name": "metadata",
-        "description": "Returns either a cover link, metadata or download links for "
+        "description": "Returns either a temp_cover link, metadata or download links for "
                        "the given md5 and topic."
     },
     {

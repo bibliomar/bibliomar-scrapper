@@ -7,7 +7,6 @@ from pydantic import ValidationError, BaseModel
 import logging
 from pymysql.err import Error
 from hurry.filesize import size, alternative
-from starlette.background import BackgroundTasks
 
 from config.mysql_connection import MySQLConnect
 from config.redis_connection import RedisConnection
@@ -55,10 +54,9 @@ class DualSearchService:
 
         if fiction_exc.status_code == 500:
             tobe_raised = fiction_exc
-            raise tobe_raised
+
         elif scitech_exc.status_code == 500:
             tobe_raised = scitech_exc
-            raise scitech_exc
         else:
             tobe_raised = fiction_exc
 

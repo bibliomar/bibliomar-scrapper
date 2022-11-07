@@ -6,6 +6,7 @@ from enum import Enum
 
 # This ensures that md5 is a valid 32 hexadecimal string.
 md5_reg = "^[0-9a-fA-F]{32}$"
+match_anywhere_md5_reg = "[0-9a-fA-F]{32}$"
 # Date format that should be used. It's mainly made to work with Javascript Date().
 date_format = "%Y-%m-%dT%H:%M:%SZ"
 

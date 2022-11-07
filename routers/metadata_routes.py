@@ -5,7 +5,7 @@ from models.body_models import Metadata
 from models.path_models import ValidIndexesTopic
 from models.response_models import LegacyMetadataResponse
 from models.query_models import ValidTopics
-from services.cover.cover_service import TempCoverService
+from services.temp_cover.cover_service import TempCoverService
 from services.metadata.metadata_service import MetadataService
 from services.search.metadata_functions import get_cover, get_metadata, get_dlinks
 from services.search.search_index_functions import get_search_index
@@ -18,7 +18,7 @@ router = APIRouter(
 @router.get("/cover/{md5}", tags=["metadata"])
 async def get_cover_by_md5(md5: str, response: Response):
     """
-    Gets a cover link using the file's md5.  <br>
+    Gets a temp_cover link using the file's md5.  <br>
     It's recommended to use search's md5 values, because they are valid md5 that you know are in Libgen database.  <br>
     Returns 429 error code if a user exceeds the 2 request / 2 second limit. <br>
     Requests are cached for 2 weeks by default. If it's cached, the "Cached" header will be true.
@@ -30,7 +30,7 @@ async def get_cover_by_md5(md5: str, response: Response):
     return results
 
 
-@router.get("/cover/{topic}/md5", tags=["metadata"])
+@router.get("/cover/{topic}/{md5}", tags=["metadata"])
 async def new_get_cover(bg_tasks: BackgroundTasks, handler: TempCoverService = Depends(), ):
     cached_cover = await handler.retrieve_from_cache()
     if cached_cover:
