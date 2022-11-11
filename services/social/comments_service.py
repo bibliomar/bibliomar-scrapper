@@ -267,9 +267,10 @@ class CommentsService:
 
         # Retrieves a given md5's comments and projects the query to only return the "comments" array.
         possible_comments: dict | None = await connection.find_one({"md5": self.md5}, {"comments": 1, "_id": 0})
-        comments_list = possible_comments.get("comments")
-        if possible_comments is None or not bool(comments_list):
+
+        if possible_comments is None or not bool(possible_comments.get("comments")):
             raise HTTPException(400, "No comments match the given MD5.")
+        comments_list = possible_comments.get("comments")
         return comments_list
 
     async def get_sorted_comments(self, query: CommentsQuery):
