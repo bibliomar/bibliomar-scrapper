@@ -13,6 +13,7 @@ class RedisConnection:
             await self.redis.ping()
             return True
         except RedisError as e:
+            print(e)
             return False
 
     async def __aenter__(self) -> Redis:

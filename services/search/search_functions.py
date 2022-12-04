@@ -54,7 +54,8 @@ async def fiction_handler(search_parameters: LegacyFictionSearchQuery):
     try:
         redis = aioredis.from_url(redis_provider, decode_responses=True)
         await redis.ping()
-    except aioredis.exceptions.RedisError:
+    except aioredis.exceptions.RedisError as e:
+        print(e)
         # If something goes wrong, and we can't connect to Redis.
         redis = None
 
@@ -72,9 +73,11 @@ async def fiction_handler(search_parameters: LegacyFictionSearchQuery):
     try:
         lbs = AIOLibgenSearch("fiction", **search_parameters)
     except InvalidSearchParameter:
-        raise HTTPException(400, "Invalid query parameter(s). Check the docs for more info.")
+        raise HTTPException(
+            400, "Invalid query parameter(s). Check the docs for more info.")
     except LibgenError:
-        raise HTTPException(500, "LibraryGenesis is down or unreachable. This may be an internal issue.")
+        raise HTTPException(
+            500, "LibraryGenesis is down or unreachable. This may be an internal issue.")
 
     try:
         lbr: OrderedDict = await lbs.get_results(pagination=False)
@@ -125,9 +128,11 @@ async def scitech_handler(search_parameters: LegacyScitechSearchQuery):
     try:
         lbs = AIOLibgenSearch("sci-tech", **search_parameters)
     except InvalidSearchParameter:
-        raise HTTPException(400, "Invalid query parameter(s). Check the docs for more info.")
+        raise HTTPException(
+            400, "Invalid query parameter(s). Check the docs for more info.")
     except LibgenError:
-        raise HTTPException(500, "LibraryGenesis is down or unreachable. This may be an internal issue.")
+        raise HTTPException(
+            500, "LibraryGenesis is down or unreachable. This may be an internal issue.")
 
     try:
         lbr: OrderedDict = await lbs.get_results(pagination=False)
@@ -149,4 +154,3 @@ async def scitech_handler(search_parameters: LegacyScitechSearchQuery):
         await redis.close()
     cached = "false"
     return libgen_results, cached
-

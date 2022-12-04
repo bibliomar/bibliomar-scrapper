@@ -7,4 +7,3 @@ class MySQLSettings(BaseSettings):
     user: str = Field(..., env="MYSQL_USER")
     password: str = Field(..., env="MYSQL_PASS")
     db: str = Field(..., env="MYSQL_SCHEMA")
-

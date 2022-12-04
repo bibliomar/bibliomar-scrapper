@@ -2,8 +2,11 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 from keys import mongodb_provider
 
+print(mongodb_provider)
 
 # Establishes an database "connection".
+
+
 def mongodb_connect():
     # This makes no actual I/O.
     client = AsyncIOMotorClient(mongodb_provider)

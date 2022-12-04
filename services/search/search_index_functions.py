@@ -3,6 +3,9 @@ from config.mongodb_connection import mongodb_search_connect
 from models.path_models import ValidIndexesTopic
 from models.query_models import ValidTopics
 import re
+import logging
+
+logger = logging.getLogger("biblioterra")
 
 
 async def save_search_index(topic: ValidTopics, lbr_data: list[dict]):
@@ -32,8 +35,10 @@ async def save_search_index(topic: ValidTopics, lbr_data: list[dict]):
 
     try:
         await connection.update_one({"data": "search_indexes"}, {"$addToSet": {topic: {"$each": indexes_list}}})
-    except:
-        raise ConnectionError("Couldn't update the specific search indexes array.")
+    except BaseException as err:
+        logger.error(err)
+        raise ConnectionError(
+            "Couldn't update the specific search indexes array.")
 
 
 async def get_search_index(topic: ValidIndexesTopic):
@@ -41,6 +46,7 @@ async def get_search_index(topic: ValidIndexesTopic):
     try:
         if topic is ValidIndexesTopic.any:
             search_indexes: dict = await connection.find_one({"data": "search_indexes"})
+            logger.info(search_indexes)
             fiction_indexes: list = search_indexes.get("fiction")
             sci_tech_indexes: list = search_indexes.get("sci-tech")
             any_indexes = fiction_indexes + sci_tech_indexes
@@ -49,5 +55,6 @@ async def get_search_index(topic: ValidIndexesTopic):
             search_indexes: dict = await connection.find_one({"data": "search_indexes"}, {topic})
             return search_indexes.get(topic)
 
-    except:
+    except BaseException as err:
+        logger.error(err)
         raise HTTPException(500, "Couldn't find indexes for this given topic.")
