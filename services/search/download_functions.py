@@ -16,7 +16,7 @@ async def remove_temp_download(filename: str):
 
 
 async def _create_temp_file(content: bytes, md5: str):
-    filename = os.path.sep.join(temp_download_folder, f"{md5}.epub")
+    filename = os.path.join(temp_download_folder, f"{md5}.epub")
     async with aiofiles.open(filename, "wb+") as fo:
         await fo.write(content)
         await fo.close()
