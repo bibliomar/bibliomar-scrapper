@@ -28,7 +28,7 @@ origins = (
     "https://www.beta.bibliomar.site",
     "http://www.beta.bibliomar.site",
     "https://beta.bibliomar.site",
-    "http://beta.bibliomar.site"
+    "http://beta.bibliomar.site",
     preview_url
 )
 
