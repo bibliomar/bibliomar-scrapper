@@ -57,35 +57,13 @@ You can then filter your search using queries, and while you're at it, why not a
 
 ## **Installation**
 
-### **Automatic**
-
-This is the recommended method. It ensures you have a consistent development enviroment with the rest of the
-contributors.  
-This method is powered by VS Code's Dev Containers.
-
-Using this method you:
-- Can be sure your development experience will be seamless
-- Reduce the number of problems related to enviroment setup
-- Can get working in a matter of minutes
-
-First, install [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed in your machine.  
-If you are on Windows, it's highly recommended to enable [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
-
-Then, simply open this project using [VS Code](https://code.visualstudio.com/).  
-The editor will prompt you to install "Remote - Dev Containers" and to "Reopen in Dev Container".
-
-This installation provides you with a clean Python3.10 image, with Poetry, MySQL, MongoDB and Redis pre-installed.  
-It also features default env variables so you can get running as soon as you open the container.
-
-### **Manual**
-
 You need to have the following dependencies installed before starting:  
 Python 3.10  
 Poetry (a dependency manager)  
 
-MySQL 8.1  
+MySQL 8.1
 MongoDB  
-Redis  
+Redis
 
 There's plenty of articles about how to install each one.  
 
