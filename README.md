@@ -1,5 +1,3 @@
-[![VS Code Container](https://img.shields.io/static/v1?label=VS+Code&message=Container&logo=visualstudiocode&color=007ACC&logoColor=007ACC&labelColor=2C2C32)](https://open.vscode.dev/microsoft/vscode)
-
 ## Biblioterra
 
 A complete middle ground API for LibraryGenesis data, built for educational purposes.
@@ -25,6 +23,8 @@ PRs are very welcome.
 ## Refactored
 This API is legacy, we now have a more [robust solution](https://github.com/bibliomar/bibliomar-server) written in Java.
 This doesn't mean this API doesn't work, it just uses an older scrapping model that we ditched in favor of an actual database instance.
+
+Fun fact: this API used to run in a 256MB RAM server (fly.io), so expect good performance :D 
 
 ## Disclaimer
 
