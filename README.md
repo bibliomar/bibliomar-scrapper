@@ -1,11 +1,5 @@
 ## Biblioterra
-
 A complete middle ground API for LibraryGenesis data, built for educational purposes.
-LibraryGenesis has a simple API, but it doesn't meet the developers demand for searching yet.
-A forum member, "Librarian" contacted me about the possibility of a new API being developed, so i hereby invite everyone
-that is interested in developing something on the core of the libgen data to give the thread a read.
-It's here:  
-[[call for developers!] A new API is on its way](https://forum.mhut.org/viewtopic.php?f=17&t=11192)
 
 Biblioterra uses my fork of [grab-convert-from-libgen](https://github.com/willmeyers/grab-convert-from-libgen), from `Willmeyers`.  
 Find out more about the fork:  
